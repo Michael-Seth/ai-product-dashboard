@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Recommender Web Component Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9fafb;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        react-recommender {
+            display: block;
+            min-height: 200px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">React Recommender Web Component Test</h1>
+        
+        <div class="test-section">
+            <h2 class="text-xl font-semibold mb-4">Test 1: No Product Selected</h2>
+            <react-recommender></react-recommender>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="text-xl font-semibold mb-4">Test 2: With Product Data</h2>
+            <react-recommender product='{"id":1,"name":"MacBook Air M2","description":"Lightweight laptop with M2 chip","price":1199,"imageUrl":"https://via.placeholder.com/300x200"}'></react-recommender>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="text-xl font-semibold mb-4">Test Controls</h2>
+            <button onclick="updateProduct()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2">
+                Update Product
+            </button>
+            <button onclick="clearProduct()" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                Clear Product
+            </button>
+        </div>
+    </div>
+
+    <!-- Load the Web Component -->
+    <script type="module" src="../../../dist/react-recommender-web-component/react-recommender.mjs"></script>
+    
+    <script>
+        function updateProduct() {
+            const recommender = document.querySelector('react-recommender:last-of-type');
+            const newProduct = {
+                id: 2,
+                name: "Dell XPS 13",
+                description: "Premium ultrabook with InfinityEdge display",
+                price: 999,
+                imageUrl: "https://via.placeholder.com/300x200"
+            };
+            recommender.setAttribute('product', JSON.stringify(newProduct));
+        }
+        
+        function clearProduct() {
+            const recommender = document.querySelector('react-recommender:last-of-type');
+            recommender.removeAttribute('product');
+        }
+    </script>
+</body>
+</html>

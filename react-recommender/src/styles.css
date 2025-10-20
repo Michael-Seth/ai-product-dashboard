@@ -1,0 +1,56 @@
+/* You can add global styles to this file, and also import other style files */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom component styles for React recommender */
+@layer components {
+  .recommendation-card {
+    @apply p-3 border border-gray-200 rounded-md bg-white shadow-sm hover:scale-105 hover:shadow-md transition-all duration-200 cursor-pointer;
+  }
+  
+  .loading-spinner {
+    @apply animate-spin h-8 w-8 border-4 border-brand border-t-transparent rounded-full;
+  }
+  
+  .loading-spinner-small {
+    @apply animate-spin h-5 w-5 border-2 border-brand border-t-transparent rounded-full;
+  }
+  
+  .fade-in {
+    @apply animate-fade-in;
+  }
+  
+  .empty-state {
+    @apply flex flex-col items-center justify-center p-8 text-center;
+  }
+  
+  .empty-state-icon {
+    @apply w-12 h-12 text-gray-400 mb-4;
+  }
+  
+  .empty-state-title {
+    @apply text-base font-medium text-gray-900 mb-2;
+  }
+  
+  .empty-state-description {
+    @apply text-sm text-gray-500;
+  }
+  
+  .recommendation-header {
+    @apply text-lg font-semibold text-brand mb-4;
+  }
+  
+  .recommendation-list {
+    @apply space-y-3;
+  }
+  
+  .recommendation-name {
+    @apply font-medium text-gray-900 mb-2;
+  }
+  
+  .recommendation-reason {
+    @apply text-sm text-gray-600;
+  }
+}

@@ -1,0 +1,38 @@
+/* Additional custom styles for ProductListComponent */
+
+.product-card {
+  /* Ensure smooth transitions for all hover effects */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  /* Enhanced hover effect with subtle lift */
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Line clamp utility for description text */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Ensure images maintain aspect ratio */
+.product-card img {
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Button hover effects */
+.product-card button {
+  transition: all 0.2s ease;
+}
+
+.product-card button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(20, 183, 205, 0.3);
+}

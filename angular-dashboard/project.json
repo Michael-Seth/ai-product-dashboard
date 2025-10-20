@@ -1,0 +1,106 @@
+{
+  "name": "angular-dashboard",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "angular-dashboard/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/angular-dashboard",
+        "browser": "angular-dashboard/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "angular-dashboard/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "angular-dashboard/public"
+          }
+        ],
+        "styles": [
+          "angular-dashboard/src/styles.css"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all",
+          "optimization": {
+            "scripts": true,
+            "styles": {
+              "minify": true,
+              "inlineCritical": true
+            },
+            "fonts": true
+          },
+          "sourceMap": false,
+          "extractLicenses": true,
+          "namedChunks": false
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "angular-dashboard:build:production"
+        },
+        "development": {
+          "buildTarget": "angular-dashboard:build:development",
+          "proxyConfig": "angular-dashboard/proxy.conf.json"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular/build:extract-i18n",
+      "options": {
+        "buildTarget": "angular-dashboard:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "angular-dashboard/jest.config.ts",
+        "tsConfig": "angular-dashboard/tsconfig.spec.json"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "angular-dashboard:build",
+        "port": 4200,
+        "staticFilePath": "dist/angular-dashboard/browser",
+        "spa": true
+      }
+    }
+  }
+}

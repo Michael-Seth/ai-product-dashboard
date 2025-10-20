@@ -1,0 +1,32 @@
+{
+  "name": "integration-tests",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "integration-tests",
+  "projectType": "library",
+  "tags": ["scope:integration", "type:test"],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "integration-tests/jest.config.ts",
+        "passWithNoTests": false
+      }
+    },
+    "test:watch": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "integration-tests/jest.config.ts",
+        "watch": true
+      }
+    },
+    "test:coverage": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "integration-tests/jest.config.ts",
+        "coverage": true,
+        "coverageReporters": ["html", "lcov", "text-summary"]
+      }
+    }
+  }
+}

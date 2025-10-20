@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-10-19T07:35:55.000Z",
+  "nodeVersion": "v20.19.2",
+  "buildOutputs": [
+    {
+      "name": "Angular Dashboard",
+      "path": "dist/angular-dashboard",
+      "exists": true,
+      "size": 318632
+    },
+    {
+      "name": "React Recommender",
+      "path": "dist/react-recommender",
+      "exists": true,
+      "size": 307706
+    },
+    {
+      "name": "React Web Component",
+      "path": "dist/react-recommender-web-component",
+      "exists": true,
+      "size": 2445811
+    }
+  ],
+  "recommendations": [
+    "Enable gzip/brotli compression on your server",
+    "Configure proper cache headers for static assets",
+    "Use a CDN for global asset delivery",
+    "Monitor bundle sizes in CI/CD pipeline",
+    "Consider implementing service worker for offline support"
+  ]
+}

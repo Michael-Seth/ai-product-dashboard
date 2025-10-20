@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../dist/out-tsc",
+    "declaration": true,
+    "types": ["node"],
+    "skipLibCheck": true,
+    "composite": true,
+    "rootDir": "..",
+    "baseUrl": "..",
+    "paths": {
+      "@ai-product-dashboard/shared-types": ["shared-types/src/index.ts"]
+    }
+  },
+  "include": ["shared-api/src/**/*.ts"],
+  "exclude": [
+    "shared-api/jest.config.ts", 
+    "shared-api/src/**/*.spec.ts", 
+    "shared-api/src/**/*.test.ts"
+  ]
+}

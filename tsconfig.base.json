@@ -1,0 +1,23 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "commonjs",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ai-product-dashboard/shared-api": ["shared-api/src/index.ts"],
+      "@ai-product-dashboard/shared-types": ["shared-types/src/index.ts"],
+      "@ai-product-dashboard/source": ["src/index.ts"]
+    }
+  }
+}

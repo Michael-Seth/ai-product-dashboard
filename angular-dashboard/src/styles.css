@@ -1,0 +1,64 @@
+/* You can add global styles to this file, and also import other style files */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom component styles */
+@layer components {
+  .product-card {
+    @apply p-4 border border-gray-200 rounded-lg bg-white shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer;
+  }
+  
+  .recommendation-card {
+    @apply p-3 border border-gray-200 rounded-md bg-white shadow-sm hover:scale-105 transition-transform duration-200 cursor-pointer;
+  }
+  
+  .loading-spinner {
+    @apply animate-spin h-6 w-6 border-3 border-brand border-t-transparent rounded-full;
+  }
+  
+  .loading-spinner-small {
+    @apply animate-spin h-4 w-4 border-2 border-brand border-t-transparent rounded-full;
+  }
+  
+  .dashboard-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6;
+  }
+  
+  .fade-in {
+    @apply animate-fade-in;
+  }
+  
+  .empty-state {
+    @apply flex flex-col items-center justify-center p-8 text-center;
+  }
+  
+  .empty-state-icon {
+    @apply w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4;
+  }
+  
+  .empty-state-title {
+    @apply text-lg font-semibold text-gray-900 mb-2;
+  }
+  
+  .empty-state-description {
+    @apply text-gray-600 max-w-sm;
+  }
+  
+  .card-container {
+    @apply bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+  
+  .section-header {
+    @apply text-lg font-semibold text-gray-900 mb-4;
+  }
+  
+  .brand-button {
+    @apply bg-brand text-white py-2 px-4 rounded-lg font-medium hover:bg-brand-dark transition-colors duration-200;
+  }
+  
+  .brand-button-outline {
+    @apply border border-brand text-brand py-2 px-4 rounded-lg font-medium hover:bg-brand hover:text-white transition-colors duration-200;
+  }
+}
