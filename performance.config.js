@@ -5,8 +5,7 @@
  * settings across the application.
  */
 
-const performanceConfig = {
-  // Bundle size limits (in bytes)
+const performanceConfig = {
   bundleLimits: {
     angular: {
       initial: 1024 * 1024, // 1MB
@@ -22,86 +21,59 @@ const performanceConfig = {
       total: 500 * 1024, // 500KB
       warning: 300 * 1024, // 300KB
     }
-  },
-
-  // Performance budgets
-  performanceBudgets: {
-    // Core Web Vitals targets
+  },
+  performanceBudgets: {
     lcp: 2500, // Largest Contentful Paint (ms)
     fid: 100,  // First Input Delay (ms)
-    cls: 0.1,  // Cumulative Layout Shift
-    
-    // Additional metrics
+    cls: 0.1,  // Cumulative Layout Shift
     fcp: 1800, // First Contentful Paint (ms)
-    ttfb: 600, // Time to First Byte (ms)
-    
-    // Resource loading
+    ttfb: 600, // Time to First Byte (ms)
     jsExecutionTime: 50, // Main thread blocking time (ms)
     totalBlockingTime: 200, // Total blocking time (ms)
-  },
-
-  // Optimization strategies
-  optimizations: {
-    // Code splitting
+  },
+  optimizations: {
     codeSplitting: {
       enabled: true,
       chunkStrategy: 'vendor-separation',
       dynamicImports: true
-    },
-    
-    // Tree shaking
+    },
     treeShaking: {
       enabled: true,
       sideEffects: false,
       unusedExports: true
-    },
-    
-    // Minification
+    },
     minification: {
       js: 'terser',
       css: true,
       html: true,
       removeComments: true,
       removeWhitespace: true
-    },
-    
-    // Asset optimization
+    },
     assets: {
       inlineLimit: 4096, // 4KB
       imageOptimization: true,
       fontOptimization: true,
       svgOptimization: true
-    },
-    
-    // Caching
+    },
     caching: {
       staticAssets: '1y', // 1 year
       apiResponses: '5m', // 5 minutes
       htmlPages: '1h', // 1 hour
     }
-  },
-
-  // Monitoring
-  monitoring: {
-    // Performance API
-    performanceObserver: true,
-    
-    // Bundle analysis
+  },
+  monitoring: {
+    performanceObserver: true,
     bundleAnalysis: {
       enabled: true,
       threshold: 100 * 1024, // Report files > 100KB
       reportPath: './performance-report.json'
-    },
-    
-    // Runtime monitoring
+    },
     runtime: {
       memoryUsage: true,
       renderTime: true,
       apiLatency: true
     }
-  },
-
-  // Development vs Production
+  },
   environments: {
     development: {
       sourceMaps: true,

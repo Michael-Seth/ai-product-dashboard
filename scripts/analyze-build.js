@@ -49,12 +49,8 @@ function analyzeDirectory(dirPath, appName) {
     }
   }
 
-  walkDir(dirPath);
-
-  // Sort by size (largest first)
-  files.sort((a, b) => b.size - a.size);
-
-  // Group by file type
+  walkDir(dirPath);
+  files.sort((a, b) => b.size - a.size);
   const byType = {};
   let totalSize = 0;
 
@@ -66,25 +62,19 @@ function analyzeDirectory(dirPath, appName) {
   });
 
   console.log(`📦 Total Size: ${formatBytes(totalSize)}`);
-  console.log(`📄 Total Files: ${files.length}`);
-
-  // Show breakdown by file type
+  console.log(`📄 Total Files: ${files.length}`);
   console.log('\n📋 File Type Breakdown:');
   Object.keys(byType).sort().forEach(type => {
     const typeFiles = byType[type];
     const typeSize = typeFiles.reduce((sum, f) => sum + f.size, 0);
     const percentage = ((typeSize / totalSize) * 100).toFixed(1);
     console.log(`  ${type.padEnd(8)} ${formatBytes(typeSize).padStart(10)} (${percentage}%)`);
-  });
-
-  // Show largest files
+  });
   console.log('\n🔍 Largest Files:');
   files.slice(0, 10).forEach((file, index) => {
     const percentage = ((file.size / totalSize) * 100).toFixed(1);
     console.log(`  ${(index + 1).toString().padStart(2)}. ${file.path.padEnd(40)} ${formatBytes(file.size).padStart(10)} (${percentage}%)`);
-  });
-
-  // Optimization recommendations
+  });
   console.log('\n💡 Optimization Recommendations:');
   
   const jsFiles = files.filter(f => f.ext === '.js');
@@ -142,9 +132,7 @@ function main() {
   
   apps.forEach(app => {
     results[app.name] = analyzeDirectory(app.path, app.name);
-  });
-
-  // Overall summary
+  });
   console.log('\n📈 Overall Summary:');
   console.log('=' .repeat(50));
   
@@ -161,9 +149,7 @@ function main() {
   });
   
   console.log(`\n🎯 Total Application Size: ${formatBytes(totalOverallSize)}`);
-  console.log(`📁 Total Files: ${totalOverallFiles}`);
-
-  // Performance recommendations
+  console.log(`📁 Total Files: ${totalOverallFiles}`);
   console.log('\n🚀 Performance Recommendations:');
   console.log('  ✅ Enable gzip/brotli compression on server');
   console.log('  ✅ Implement HTTP/2 for better multiplexing');

@@ -8,9 +8,7 @@ interface RecommenderProps {
 
 export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
   const [retryCount, setRetryCount] = useState(0);
-  const [lastError, setLastError] = useState<string | null>(null);
-
-  // Skip query if no product is selected
+  const [lastError, setLastError] = useState<string | null>(null);
   const {
     data,
     error,
@@ -19,13 +17,10 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     refetch,
     isFetching,
   } = useGetRecommendationsQuery(product?.name || '', {
-    skip: !product,
-    // Retry failed requests automatically
+    skip: !product,
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true,
-  });
-
-  // Handle retry logic
+  });
   const handleRetry = useCallback(async () => {
     if (retryCount < 3) { // Limit retries to prevent infinite loops
       setRetryCount(prev => prev + 1);
@@ -39,15 +34,11 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     } else {
       setLastError('Maximum retry attempts reached. Please refresh the page.');
     }
-  }, [refetch, retryCount]);
-
-  // Reset retry count when product changes
+  }, [refetch, retryCount]);
   useEffect(() => {
     setRetryCount(0);
     setLastError(null);
-  }, [product?.name]);
-
-  // Enhanced loading state with branded spinner
+  }, [product?.name]);
   if (isLoading || isFetching) {
     return (
       <div className="loading-container empty-state">
@@ -68,9 +59,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
         )}
       </div>
     );
-  }
-
-  // Enhanced error state with user-friendly messages and retry functionality
+  }
   if (isError) {
     const errorMessage = typeof error === 'string' 
       ? error 

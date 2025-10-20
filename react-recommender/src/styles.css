@@ -1,10 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
+
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom component styles for React recommender */
+
 @layer components {
   .recommendation-card {
     @apply p-3 border border-gray-200 rounded-md bg-white shadow-sm hover:scale-105 hover:shadow-md transition-all duration-200 cursor-pointer;

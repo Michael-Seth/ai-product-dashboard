@@ -5,8 +5,7 @@
  * for both Angular and React applications.
  */
 
-const buildOptimization = {
-  // Common optimization settings
+const buildOptimization = {
   common: {
     minify: true,
     sourcemap: false,
@@ -14,9 +13,7 @@ const buildOptimization = {
     treeshake: true,
     chunkSizeWarningLimit: 1000,
     assetsInlineLimit: 4096
-  },
-
-  // Angular-specific optimizations
+  },
   angular: {
     optimization: {
       scripts: true,
@@ -33,9 +30,7 @@ const buildOptimization = {
     namedChunks: false,
     extractLicenses: true,
     outputHashing: 'all'
-  },
-
-  // React/Vite-specific optimizations
+  },
   react: {
     minify: 'terser',
     rollupOptions: {
@@ -49,9 +44,7 @@ const buildOptimization = {
         assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     }
-  },
-
-  // Web Component specific optimizations
+  },
   webComponent: {
     minify: 'terser',
     chunkSizeWarningLimit: 500,

@@ -1,7 +1,6 @@
 import { recommendProducts, mockRecommend, resetOpenAIClient } from './shared-api';
 import { Product } from '@ai-product-dashboard/shared-types';
 
-// Mock OpenAI module
 jest.mock('openai', () => {
   return {
     __esModule: true,
@@ -50,7 +49,7 @@ describe('shared-api', () => {
 
   describe('recommendProducts', () => {
     beforeEach(() => {
-      // Clear environment variables
+
       delete process.env['OPENAI_API_KEY'];
       delete process.env['VITE_OPENAI_API_KEY'];
       jest.clearAllMocks();
@@ -68,10 +67,9 @@ describe('shared-api', () => {
     });
 
     it('should handle OpenAI API success', async () => {
-      // Set up environment variable
+
       process.env['OPENAI_API_KEY'] = 'test-api-key';
-      
-      // Mock successful OpenAI response
+
       const mockOpenAI = require('openai').default;
       const mockCreate = jest.fn().mockResolvedValue({
         choices: [{
@@ -107,10 +105,9 @@ describe('shared-api', () => {
     });
 
     it('should fall back to mock recommendations when OpenAI API fails', async () => {
-      // Set up environment variable
+
       process.env['OPENAI_API_KEY'] = 'test-api-key';
-      
-      // Mock OpenAI API failure
+
       const mockOpenAI = require('openai').default;
       const mockCreate = jest.fn().mockRejectedValue(new Error('API key error'));
       
@@ -132,10 +129,9 @@ describe('shared-api', () => {
     });
 
     it('should return error for non-API related failures', async () => {
-      // Set up environment variable
+
       process.env['OPENAI_API_KEY'] = 'test-api-key';
-      
-      // Mock OpenAI with invalid JSON response
+
       const mockOpenAI = require('openai').default;
       const mockCreate = jest.fn().mockResolvedValue({
         choices: [{

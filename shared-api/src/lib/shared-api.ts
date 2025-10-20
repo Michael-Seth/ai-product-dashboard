@@ -51,7 +51,7 @@ function getOpenAIClient(): OpenAI | null {
  * Mock recommendation function that provides fallback data
  */
 export function mockRecommend(productName: string): Recommendation[] {
-  // Input validation for mock function
+
   if (!productName || typeof productName !== 'string') {
     console.warn(
       'Invalid product name for mock recommendations, using default'
@@ -119,7 +119,6 @@ export function mockRecommend(productName: string): Recommendation[] {
     ],
   };
 
-  // Return specific recommendations if available, otherwise generic ones
   return (
     mockRecommendations[productName] || [
       {
@@ -148,7 +147,7 @@ export function mockRecommend(productName: string): Recommendation[] {
 export async function recommendProducts(
   product: Product
 ): Promise<RecommendationResponse | APIError> {
-  // Input validation
+
   if (!product || typeof product !== 'object') {
     console.error('Invalid product input:', product);
     return {
@@ -172,7 +171,6 @@ export async function recommendProducts(
   try {
     const client = getOpenAIClient();
 
-    // Fall back to mock if OpenAI is not available
     if (!client) {
       console.log('OpenAI client not available, using mock recommendations');
       return {
@@ -217,7 +215,7 @@ Format your response as valid JSON:
           max_tokens: 500,
           temperature: 0.7,
         }),
-        // Add timeout to prevent hanging requests
+
         new Promise((_, reject) =>
           setTimeout(
             () => reject(new Error('Request timeout after 10 seconds')),
@@ -254,7 +252,6 @@ Format your response as valid JSON:
       };
     }
 
-    // Validate the response structure
     if (
       !parsedResponse.recommendations ||
       !Array.isArray(parsedResponse.recommendations)
@@ -265,7 +262,6 @@ Format your response as valid JSON:
       };
     }
 
-    // Validate and sanitize each recommendation
     const validRecommendations: Recommendation[] = [];
     for (const rec of parsedResponse.recommendations) {
       if (
@@ -287,7 +283,6 @@ Format your response as valid JSON:
       }
     }
 
-    // If no valid recommendations, fall back to mock
     if (validRecommendations.length === 0) {
       console.warn(
         'No valid recommendations from OpenAI, falling back to mock'
@@ -303,9 +298,8 @@ Format your response as valid JSON:
   } catch (error) {
     console.error('Error generating recommendations:', error);
 
-    // Categorize errors and provide appropriate fallbacks
     if (error instanceof Error) {
-      // Network-related errors - fall back to mock
+
       if (
         error.message.includes('fetch') ||
         error.message.includes('network') ||
@@ -321,7 +315,6 @@ Format your response as valid JSON:
         };
       }
 
-      // API key or authentication errors - fall back to mock
       if (
         error.message.includes('API key') ||
         error.message.includes('authentication') ||
@@ -336,7 +329,6 @@ Format your response as valid JSON:
         };
       }
 
-      // Rate limiting errors - fall back to mock
       if (
         error.message.includes('rate limit') ||
         error.message.includes('429') ||
@@ -350,7 +342,6 @@ Format your response as valid JSON:
         };
       }
 
-      // Server errors - fall back to mock
       if (
         error.message.includes('500') ||
         error.message.includes('502') ||
@@ -366,7 +357,6 @@ Format your response as valid JSON:
       }
     }
 
-    // For any other errors, still try to provide mock recommendations
     console.log(
       'Unknown error occurred, attempting to provide mock recommendations'
     );

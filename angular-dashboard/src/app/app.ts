@@ -18,7 +18,7 @@ export class App implements OnInit, OnDestroy {
   constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
-    // Subscribe to cart changes to update item count
+
     this.subscription.add(
       this.cartService.cartItems$.subscribe(items => {
         this.cartItemCount = items.reduce((total, item) => total + item.quantity, 0);

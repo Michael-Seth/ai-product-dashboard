@@ -4,9 +4,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { recommendationApi } from '../../store/api';
 import { Recommender } from './Recommender';
-import { Product } from '@ai-product-dashboard/shared-types';
-
-// Mock store setup
+import { Product } from '@ai-product-dashboard/shared-types';
 const createMockStore = (mockApi: any) => {
   return configureStore({
     reducer: {
@@ -15,9 +13,7 @@ const createMockStore = (mockApi: any) => {
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(mockApi.middleware),
   });
-};
-
-// Mock product for testing
+};
 const mockProduct: Product = {
   id: 1,
   name: 'Test Product',
@@ -32,9 +28,7 @@ describe('Recommender Error Handling', () => {
       ...recommendationApi,
       reducer: jest.fn(() => ({})),
       middleware: jest.fn(() => (next: any) => (action: any) => next(action)),
-    };
-
-    // Mock the hook to return loading state
+    };
     jest.spyOn(require('../../store/api'), 'useGetRecommendationsQuery').mockReturnValue({
       data: undefined,
       error: undefined,

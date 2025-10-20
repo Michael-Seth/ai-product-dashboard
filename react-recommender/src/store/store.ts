@@ -1,7 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { recommendationApi } from './api';
-
-// Store configuration function for Web Component usage
+import { recommendationApi } from './api';
 export const setupStore = (preloadedState?: any) => {
   return configureStore({
     reducer: {
@@ -11,12 +9,8 @@ export const setupStore = (preloadedState?: any) => {
       getDefaultMiddleware().concat(recommendationApi.middleware),
     preloadedState,
   });
-};
-
-// Default store instance
-export const store = setupStore();
-
-// Infer the `RootState` and `AppDispatch` types from the store itself
+};
+export const store = setupStore();
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export type AppStore = ReturnType<typeof setupStore>;

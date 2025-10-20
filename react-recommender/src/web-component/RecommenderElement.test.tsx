@@ -1,7 +1,5 @@
 import { RecommenderElement } from './RecommenderElement';
-import { Product } from '@ai-product-dashboard/shared-types';
-
-// Mock React DOM
+import { Product } from '@ai-product-dashboard/shared-types';
 const mockRender = jest.fn();
 const mockUnmount = jest.fn();
 const mockCreateRoot = jest.fn(() => ({
@@ -11,24 +9,16 @@ const mockCreateRoot = jest.fn(() => ({
 
 jest.mock('react-dom/client', () => ({
   createRoot: mockCreateRoot,
-}));
-
-// Mock the Recommender component
+}));
 jest.mock('../app/components/Recommender', () => ({
   Recommender: jest.fn(() => 'Mocked Recommender'),
-}));
-
-// Mock the ErrorBoundary component
+}));
 jest.mock('../app/components/ErrorBoundary', () => ({
   ErrorBoundary: jest.fn(({ children }) => children),
-}));
-
-// Mock the store setup
+}));
 jest.mock('../store', () => ({
   setupStore: jest.fn(() => ({})),
-}));
-
-// Mock Redux Provider
+}));
 jest.mock('react-redux', () => ({
   Provider: jest.fn(({ children }) => children),
 }));
@@ -36,18 +26,13 @@ jest.mock('react-redux', () => ({
 describe('RecommenderElement Web Component', () => {
   let element: RecommenderElement;
 
-  beforeEach(() => {
-    // Reset mocks
+  beforeEach(() => {
     jest.clearAllMocks();
     mockCreateRoot.mockReturnValue({
       render: mockRender,
       unmount: mockUnmount,
-    });
-
-    // Create a new element instance
-    element = new RecommenderElement();
-    
-    // Mock console methods to avoid noise in tests
+    });
+    element = new RecommenderElement();
     jest.spyOn(console, 'log').mockImplementation(() => {});
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -94,8 +79,7 @@ describe('RecommenderElement Web Component', () => {
       expect(errorFallbackSpy).toHaveBeenCalledWith('Failed to initialize recommendation widget');
     });
 
-    it('cleans up properly on disconnectedCallback', () => {
-      // Set up a mock root
+    it('cleans up properly on disconnectedCallback', () => {
       (element as any).root = { unmount: mockUnmount };
       
       element.disconnectedCallback();
@@ -108,9 +92,7 @@ describe('RecommenderElement Web Component', () => {
         throw new Error('Cleanup error');
       });
       
-      (element as any).root = { unmount: mockUnmount };
-
-      // Should not throw when disconnecting
+      (element as any).root = { unmount: mockUnmount };
       expect(() => {
         element.disconnectedCallback();
       }).not.toThrow();
@@ -121,21 +103,15 @@ describe('RecommenderElement Web Component', () => {
     it('triggers render when product attribute changes', () => {
       const renderSpy = jest.spyOn(element as any, 'render');
       
-      element.attributeChangedCallback('product', null, '{"id": 1, "name": "Test"}');
-
-      // Should set a timeout for debouncing
+      element.attributeChangedCallback('product', null, '{"id": 1, "name": "Test"}');
       expect(setTimeout).toHaveBeenCalled();
     });
 
     it('debounces rapid attribute changes', () => {
-      const renderSpy = jest.spyOn(element as any, 'render');
-      
-      // Rapidly change attributes
+      const renderSpy = jest.spyOn(element as any, 'render');
       element.attributeChangedCallback('product', null, '{"id": 1, "name": "Test1"}');
       element.attributeChangedCallback('product', '{"id": 1, "name": "Test1"}', '{"id": 1, "name": "Test2"}');
-      element.attributeChangedCallback('product', '{"id": 1, "name": "Test2"}', '{"id": 1, "name": "Test3"}');
-
-      // Should clear previous timeouts due to debouncing
+      element.attributeChangedCallback('product', '{"id": 1, "name": "Test2"}', '{"id": 1, "name": "Test3"}');
       expect(clearTimeout).toHaveBeenCalled();
     });
 
@@ -145,11 +121,8 @@ describe('RecommenderElement Web Component', () => {
       });
       const errorFallbackSpy = jest.spyOn(element as any, 'renderErrorFallback');
 
-      element.attributeChangedCallback('product', null, '{"id": 1, "name": "Test"}');
-
-      // Should handle the error gracefully when timeout executes
-      expect(() => {
-        // Manually trigger the timeout callback
+      element.attributeChangedCallback('product', null, '{"id": 1, "name": "Test"}');
+      expect(() => {
         const timeoutCallback = (setTimeout as jest.Mock).mock.calls[0][0];
         timeoutCallback();
       }).not.toThrow();
@@ -189,8 +162,7 @@ describe('RecommenderElement Web Component', () => {
         id: 1,
         description: 'Test description',
         price: 100,
-        imageUrl: 'test.jpg'
-        // missing name field
+        imageUrl: 'test.jpg'
       };
 
       element.setAttribute('product', JSON.stringify(invalidProduct));
@@ -230,12 +202,9 @@ describe('RecommenderElement Web Component', () => {
       expect(mockRender).toHaveBeenCalled();
     });
 
-    it('reuses existing root for subsequent renders', () => {
-      // First render
+    it('reuses existing root for subsequent renders', () => {
       (element as any).render();
-      expect(mockCreateRoot).toHaveBeenCalledTimes(1);
-
-      // Second render - should reuse root
+      expect(mockCreateRoot).toHaveBeenCalledTimes(1);
       (element as any).render();
       expect(mockCreateRoot).toHaveBeenCalledTimes(1);
       expect(mockRender).toHaveBeenCalledTimes(2);
@@ -253,15 +222,13 @@ describe('RecommenderElement Web Component', () => {
       element.setAttribute('product', JSON.stringify(mockProduct));
       (element as any).render();
 
-      expect(mockRender).toHaveBeenCalled();
-      // The actual product passing is tested through integration
+      expect(mockRender).toHaveBeenCalled();
     });
 
     it('handles null product correctly', () => {
       (element as any).render();
 
-      expect(mockRender).toHaveBeenCalled();
-      // Should render with null product
+      expect(mockRender).toHaveBeenCalled();
     });
   });
 
@@ -359,9 +326,7 @@ describe('RecommenderElement Web Component', () => {
     it('clears existing content before rendering', () => {
       element.innerHTML = '<div>existing content</div>';
       
-      (element as any).render();
-      
-      // Should clear content and create new container
+      (element as any).render();
       expect(mockCreateRoot).toHaveBeenCalled();
     });
   });
@@ -370,14 +335,11 @@ describe('RecommenderElement Web Component', () => {
     it('wraps component with error boundaries', () => {
       (element as any).render();
       
-      expect(mockRender).toHaveBeenCalled();
-      // Error boundary wrapping is tested through the mock
+      expect(mockRender).toHaveBeenCalled();
     });
 
     it('provides custom error fallback', () => {
-      (element as any).render();
-      
-      // The error fallback is passed to ErrorBoundary
+      (element as any).render();
       expect(mockRender).toHaveBeenCalled();
     });
   });
@@ -388,9 +350,7 @@ describe('RecommenderElement Web Component', () => {
     });
 
     it('provides store to React components', () => {
-      (element as any).render();
-      
-      // Store is provided through Redux Provider
+      (element as any).render();
       expect(mockRender).toHaveBeenCalled();
     });
   });

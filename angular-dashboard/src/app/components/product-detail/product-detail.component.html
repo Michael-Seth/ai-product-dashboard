@@ -1,5 +1,5 @@
 <div class="h-full">
-  <!-- Enhanced empty state when no product is selected -->
+  
   <div *ngIf="!selectedProduct" class="empty-state h-full min-h-[400px]">
     <div class="empty-state-icon animate-pulse-brand">
       <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -16,9 +16,9 @@
     </div>
   </div>
 
-  <!-- Enhanced product details when a product is selected -->
+  
   <div *ngIf="selectedProduct" class="h-full overflow-y-auto fade-in">
-    <!-- Product image with enhanced styling -->
+    
     <div class="mb-6">
       <div class="relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
         <img 
@@ -30,16 +30,16 @@
       </div>
     </div>
 
-    <!-- Product information with enhanced styling -->
+    
     <div class="space-y-6">
-      <!-- Product name with animation -->
+      
       <div class="fade-in">
         <h2 class="text-2xl font-bold text-gray-900 leading-tight">
           {{ selectedProduct.name }}
         </h2>
       </div>
 
-      <!-- Product price with enhanced styling -->
+      
       <div class="flex items-center space-x-3 fade-in-delayed">
         <span class="text-3xl font-bold text-brand">
           ${{ selectedProduct.price }}
@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <!-- Product description with better typography -->
+      
       <div class="border-t border-gray-200 pt-6 fade-in-delayed">
         <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
           <svg class="w-5 h-5 text-brand mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@
         </p>
       </div>
 
-      <!-- Product specifications -->
+      
       <div class="border-t border-gray-200 pt-6 fade-in-delayed">
         <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
           <svg class="w-5 h-5 text-brand mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,7 +97,7 @@
         </div>
       </div>
 
-      <!-- Enhanced action buttons -->
+      
       <div class="border-t border-gray-200 pt-6 space-y-3 fade-in-delayed">
         <button class="brand-button w-full py-3 text-base font-semibold hover:scale-105 transition-all duration-200 shadow-sm hover:shadow-md">
           <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

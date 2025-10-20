@@ -1,12 +1,12 @@
-/* Component-specific styles for ProductDetailComponent */
 
-/* Ensure the component takes full height */
+
+
 :host {
   display: block;
   height: 100%;
 }
 
-/* Custom scrollbar for the product details area */
+
 .overflow-y-auto::-webkit-scrollbar {
   width: 6px;
 }
@@ -25,7 +25,7 @@
   background: #94a3b8;
 }
 
-/* Smooth transitions for interactive elements */
+
 button {
   transition: all 0.2s ease-in-out;
 }
@@ -34,7 +34,7 @@ button:active {
   transform: translateY(1px);
 }
 
-/* Image hover effect */
+
 img {
   transition: transform 0.3s ease-in-out;
 }
@@ -43,7 +43,7 @@ img:hover {
   transform: scale(1.02);
 }
 
-/* Empty state animation */
+
 .flex.flex-col.items-center.justify-center {
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -59,7 +59,7 @@ img:hover {
   }
 }
 
-/* Product details fade-in animation */
+
 .p-6.h-full.overflow-y-auto {
   animation: slideIn 0.3s ease-out;
 }

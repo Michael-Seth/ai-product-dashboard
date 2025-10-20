@@ -1,9 +1,7 @@
-// Import OpenAI directly since we can't easily use the TypeScript shared library in Vercel functions
+
 const OpenAI = require('openai');
 
-/**
- * Mock recommendation function that provides fallback data
- */
+
 function mockRecommend(productName) {
   const mockRecommendations = {
     'MacBook Air': [
@@ -26,7 +24,6 @@ function mockRecommend(productName) {
     ]
   };
 
-  // Return specific recommendations if available, otherwise generic ones
   return mockRecommendations[productName] || [
     { name: 'Laptop Stand', reason: 'Improve ergonomics and airflow for any laptop' },
     { name: 'Wireless Mouse', reason: 'Enhanced productivity with precise cursor control' },
@@ -35,14 +32,11 @@ function mockRecommend(productName) {
   ];
 }
 
-/**
- * Generate AI-powered product recommendations using OpenAI GPT-4o-mini
- */
+
 async function recommendProducts(product) {
   try {
     const apiKey = process.env.OPENAI_API_KEY;
     
-    // Fall back to mock if OpenAI is not available
     if (!apiKey) {
       console.warn('OpenAI API key not found. Falling back to mock recommendations.');
       return {
@@ -94,15 +88,12 @@ Format your response as valid JSON:
       throw new Error('No response content from OpenAI');
     }
 
-    // Parse the JSON response
     const parsedResponse = JSON.parse(responseContent);
     
-    // Validate the response structure
     if (!parsedResponse.recommendations || !Array.isArray(parsedResponse.recommendations)) {
       throw new Error('Invalid response format from OpenAI');
     }
 
-    // Validate each recommendation has required fields
     for (const rec of parsedResponse.recommendations) {
       if (!rec.name || !rec.reason || typeof rec.name !== 'string' || typeof rec.reason !== 'string') {
         throw new Error('Invalid recommendation format');
@@ -114,7 +105,6 @@ Format your response as valid JSON:
   } catch (error) {
     console.error('Error generating recommendations:', error);
     
-    // If OpenAI fails, fall back to mock recommendations
     if (error.message.includes('API key') || 
         error.message.includes('network') ||
         error.message.includes('timeout')) {
@@ -124,7 +114,6 @@ Format your response as valid JSON:
       };
     }
 
-    // For other errors, return an error response
     return {
       error: 'Failed to generate recommendations',
       message: error.message || 'Unknown error occurred'
@@ -133,7 +122,6 @@ Format your response as valid JSON:
 }
 
 module.exports = async (req, res) => {
-  // Enable CORS with error handling
   try {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -142,13 +130,11 @@ module.exports = async (req, res) => {
     console.error('Error setting CORS headers:', headerError);
   }
 
-  // Handle preflight requests
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
-  // Only allow POST requests
   if (req.method !== 'POST') {
     res.status(405).json({ 
       error: 'Method not allowed',
@@ -242,7 +228,7 @@ module.exports = async (req, res) => {
         res.status(500).json(result);
       }
     } else {
-      // Validate successful response
+
       if (!result.recommendations || !Array.isArray(result.recommendations)) {
         console.error('Invalid response format:', result);
         const fallbackRecommendations = mockRecommend(productName);
@@ -256,8 +242,7 @@ module.exports = async (req, res) => {
 
   } catch (error) {
     console.error('Error in recommendations API:', error);
-    
-    // Categorize errors for better handling
+
     let statusCode = 500;
     let errorMessage = 'Internal server error';
     let userMessage = 'Failed to generate recommendations';
@@ -276,7 +261,6 @@ module.exports = async (req, res) => {
       userMessage = 'Invalid request format.';
     }
 
-    // Always try to provide fallback recommendations
     try {
       if (productName && typeof productName === 'string') {
         const fallbackRecommendations = mockRecommend(productName);
@@ -290,7 +274,6 @@ module.exports = async (req, res) => {
       console.error('Fallback recommendations also failed:', fallbackError);
     }
 
-    // If even fallback fails, return error
     res.status(statusCode).json({
       error: errorMessage,
       message: userMessage

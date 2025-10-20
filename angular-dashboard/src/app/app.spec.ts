@@ -45,7 +45,7 @@ describe('App', () => {
     };
 
     app.onProductSelected(mockProduct);
-    // The method should execute without errors
+
     expect(app).toBeTruthy();
   });
 });

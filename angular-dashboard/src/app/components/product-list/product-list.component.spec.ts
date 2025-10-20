@@ -103,9 +103,7 @@ describe('ProductListComponent', () => {
     const productCard = fixture.nativeElement.querySelector('.product-card');
     expect(productCard.classList).toContain('group');
     expect(productCard.classList).toContain('relative');
-    expect(productCard.classList).toContain('overflow-hidden');
-    
-    // Check that hover effects are applied to child elements
+    expect(productCard.classList).toContain('overflow-hidden');
     const productImage = fixture.nativeElement.querySelector('img');
     expect(productImage.classList).toContain('group-hover:scale-110');
     expect(productImage.classList).toContain('transition-transform');
@@ -163,8 +161,7 @@ describe('ProductListComponent', () => {
     });
   });
 
-  it('should handle empty products array gracefully', () => {
-    // Mock the service to return empty array
+  it('should handle empty products array gracefully', () => {
     jest.spyOn(productService, 'getProducts').mockReturnValue([]);
     
     component.ngOnInit();
@@ -181,9 +178,7 @@ describe('ProductListComponent', () => {
 
     const productCards = fixture.nativeElement.querySelectorAll('.product-card');
     expect(productCards[0].classList).toContain('fade-in');
-    expect(productCards[1].classList).toContain('fade-in');
-
-    // Check animation delays are applied
+    expect(productCards[1].classList).toContain('fade-in');
     expect(productCards[0].style.animationDelay).toBe('0s');
     expect(productCards[1].style.animationDelay).toBe('0.1s');
   });

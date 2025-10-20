@@ -1,16 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { recommendationApi } from './api';
-import { RecommendationResponse, APIError } from '@ai-product-dashboard/shared-types';
-
-// Mock fetch for testing
+import { RecommendationResponse, APIError } from '@ai-product-dashboard/shared-types';
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
 describe('Recommendation API', () => {
   let store: ReturnType<typeof configureStore>;
 
-  beforeEach(() => {
-    // Create a fresh store for each test
+  beforeEach(() => {
     store = configureStore({
       reducer: {
         [recommendationApi.reducerPath]: recommendationApi.reducer,
@@ -22,8 +19,7 @@ describe('Recommendation API', () => {
     jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    // Clean up any pending requests
+  afterEach(() => {
     store.dispatch(recommendationApi.util.resetApiState());
   });
 

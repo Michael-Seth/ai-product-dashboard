@@ -36,9 +36,7 @@ function runCommand(command, description) {
 }
 
 function checkEnvironment() {
-  log('Checking environment...', 'info');
-  
-  // Check if we're in the right directory
+  log('Checking environment...', 'info');
   if (!fs.existsSync('package.json')) {
     log('package.json not found. Please run from project root.', 'error');
     process.exit(1);

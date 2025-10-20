@@ -255,8 +255,7 @@ export class ProductDetailPageComponent implements OnInit, OnDestroy {
 
   addToCart(): void {
     if (this.product) {
-      this.cartService.addToCart(this.product, this.quantity);
-      // You could add a success toast here
+      this.cartService.addToCart(this.product, this.quantity);
       console.log(`Added ${this.quantity} ${this.product.name}(s) to cart`);
     }
   }

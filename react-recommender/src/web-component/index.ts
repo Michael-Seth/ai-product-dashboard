@@ -13,9 +13,7 @@ export function registerRecommenderElement() {
       console.log('ℹ️ Custom element react-recommender already registered');
     }
   } catch (error) {
-    console.error('❌ Failed to register react-recommender custom element:', error);
-    
-    // Provide fallback error handling
+    console.error('❌ Failed to register react-recommender custom element:', error);
     if (error instanceof Error) {
       if (error.message.includes('already defined')) {
         console.log('ℹ️ Custom element react-recommender was already defined elsewhere');
@@ -24,9 +22,7 @@ export function registerRecommenderElement() {
       } else {
         console.error('🔥 Unknown registration error:', error.message);
       }
-    }
-    
-    // Don't throw - allow the application to continue
+    }
     // The error will be handled at the component level
   }
 }

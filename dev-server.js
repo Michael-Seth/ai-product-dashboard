@@ -2,21 +2,13 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-
-// Enable CORS for all routes
-app.use(cors());
-
-// Parse JSON bodies
-app.use(express.json());
-
-// Mock recommendation endpoint
+const PORT = process.env.PORT || 3001;
+app.use(cors());
+app.use(express.json());
 app.post('/api/recommendations', (req, res) => {
   const { productName } = req.body;
   
-  console.log(`Received recommendation request for: ${productName}`);
-  
-  // Simulate API delay
+  console.log(`Received recommendation request for: ${productName}`);
   setTimeout(() => {
     const mockRecommendations = [
       {
@@ -41,14 +33,10 @@ app.post('/api/recommendations', (req, res) => {
       recommendations: mockRecommendations
     });
   }, 500); // 500ms delay to simulate network latency
-});
-
-// Health check endpoint
+});
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Development API server is running' });
-});
-
-// Catch-all for undefined API routes
+});
 app.use('/api/*', (req, res) => {
   res.status(404).json({ 
     error: 'API endpoint not found',

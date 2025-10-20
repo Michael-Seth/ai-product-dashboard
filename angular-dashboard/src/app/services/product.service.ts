@@ -5,8 +5,7 @@ import { Product } from '@ai-product-dashboard/shared-types';
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
-  // Enhanced product catalog with more realistic e-commerce data
+export class ProductService {
   private readonly products: Product[] = [
     {
       id: '1',
@@ -100,9 +99,7 @@ export class ProductService {
       rating: 4.3,
       reviews: 567
     }
-  ];
-
-  // BehaviorSubject for selected product state
+  ];
   private selectedProductSubject = new BehaviorSubject<Product | null>(null);
   public selectedProduct$: Observable<Product | null> = this.selectedProductSubject.asObservable();
 

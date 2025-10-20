@@ -1,16 +1,12 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ErrorBoundary, withErrorBoundary } from './ErrorBoundary';
-
-// Mock component that throws an error
+import { ErrorBoundary, withErrorBoundary } from './ErrorBoundary';
 const ThrowError = ({ shouldThrow = false }: { shouldThrow?: boolean }) => {
   if (shouldThrow) {
     throw new Error('Test error message');
   }
   return <div>No error</div>;
-};
-
-// Mock window.location.reload
+};
 const mockReload = jest.fn();
 Object.defineProperty(window, 'location', {
   value: { reload: mockReload },
@@ -19,8 +15,7 @@ Object.defineProperty(window, 'location', {
 
 describe('ErrorBoundary Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    // Suppress console.error for error boundary tests
+    jest.clearAllMocks();
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -88,9 +83,7 @@ describe('ErrorBoundary Component', () => {
       );
 
       const detailsElement = screen.getByText('Error Details (Click to expand)');
-      expect(detailsElement).toBeInTheDocument();
-      
-      // Click to expand details
+      expect(detailsElement).toBeInTheDocument();
       fireEvent.click(detailsElement);
       
       expect(screen.getByText('Test error message')).toBeInTheDocument();
@@ -119,15 +112,11 @@ describe('ErrorBoundary Component', () => {
         <ErrorBoundary>
           <ThrowError shouldThrow={true} />
         </ErrorBoundary>
-      );
-
-      // Error state should be displayed
+      );
       expect(screen.getByText('Something went wrong')).toBeInTheDocument();
       
       const retryButton = screen.getByText('Try Again');
-      fireEvent.click(retryButton);
-
-      // Re-render with no error
+      fireEvent.click(retryButton);
       rerender(
         <ErrorBoundary>
           <ThrowError shouldThrow={false} />
@@ -157,9 +146,7 @@ describe('ErrorBoundary Component', () => {
         <ErrorBoundary>
           <ThrowError shouldThrow={true} />
         </ErrorBoundary>
-      );
-
-      // Click to expand error details
+      );
       const detailsElement = screen.getByText('Error Details (Click to expand)');
       fireEvent.click(detailsElement);
       
@@ -171,13 +158,9 @@ describe('ErrorBoundary Component', () => {
         <ErrorBoundary>
           <ThrowError shouldThrow={true} />
         </ErrorBoundary>
-      );
-
-      // Click to expand error details
+      );
       const detailsElement = screen.getByText('Error Details (Click to expand)');
-      fireEvent.click(detailsElement);
-      
-      // Stack trace should be present (contains function names)
+      fireEvent.click(detailsElement);
       expect(screen.getByText(/Stack Trace:/)).toBeInTheDocument();
     });
 
@@ -192,9 +175,7 @@ describe('ErrorBoundary Component', () => {
         <ErrorBoundary>
           <ThrowErrorWithoutMessage />
         </ErrorBoundary>
-      );
-
-      // Click to expand error details
+      );
       const detailsElement = screen.getByText('Error Details (Click to expand)');
       fireEvent.click(detailsElement);
       

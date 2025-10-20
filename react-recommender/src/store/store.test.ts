@@ -20,12 +20,8 @@ describe('Store Configuration', () => {
     });
 
     it('includes recommendationApi middleware', () => {
-      const testStore = setupStore();
-      
-      // Test that RTK Query middleware is working by checking if the store has the expected structure
-      expect(testStore).toBeDefined();
-      
-      // The middleware should be configured to handle RTK Query actions
+      const testStore = setupStore();
+      expect(testStore).toBeDefined();
       const state = testStore.getState();
       expect(state.recommendationApi).toBeDefined();
     });
@@ -82,8 +78,7 @@ describe('Store Configuration', () => {
   });
 
   describe('Type exports', () => {
-    it('exports correct TypeScript types', () => {
-      // These are compile-time checks, but we can verify the store structure
+    it('exports correct TypeScript types', () => {
       const state = store.getState();
       const dispatch = store.dispatch;
       
@@ -102,18 +97,14 @@ describe('Store Configuration', () => {
     });
 
     it('can handle RTK Query actions', () => {
-      const testStore = setupStore();
-      
-      // Dispatch a RTK Query action
+      const testStore = setupStore();
       expect(() => {
         testStore.dispatch(recommendationApi.util.resetApiState());
       }).not.toThrow();
     });
 
     it('maintains RTK Query state correctly', () => {
-      const testStore = setupStore();
-      
-      // Reset API state
+      const testStore = setupStore();
       testStore.dispatch(recommendationApi.util.resetApiState());
       
       const state = testStore.getState();
@@ -123,34 +114,26 @@ describe('Store Configuration', () => {
 
   describe('Middleware Configuration', () => {
     it('includes default middleware', () => {
-      const testStore = setupStore();
-      
-      // Test that middleware is working by dispatching an action
+      const testStore = setupStore();
       expect(() => {
         testStore.dispatch({ type: 'test/action' });
       }).not.toThrow();
     });
 
     it('includes RTK Query middleware', () => {
-      const testStore = setupStore();
-      
-      // RTK Query middleware should handle API actions
+      const testStore = setupStore();
       expect(() => {
         testStore.dispatch(recommendationApi.util.resetApiState());
       }).not.toThrow();
     });
 
     it('handles async actions', async () => {
-      const testStore = setupStore();
-      
-      // Mock fetch for this test
+      const testStore = setupStore();
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
         status: 200,
         json: jest.fn().mockResolvedValue({ recommendations: [] }),
-      } as any);
-
-      // Dispatch an async action
+      } as any);
       const result = await testStore.dispatch(
         recommendationApi.endpoints.getRecommendations.initiate('test')
       );
@@ -161,9 +144,7 @@ describe('Store Configuration', () => {
 
   describe('Store Persistence', () => {
     it('maintains state across actions', () => {
-      const testStore = setupStore();
-      
-      // Dispatch multiple actions
+      const testStore = setupStore();
       testStore.dispatch({ type: 'test/action1' });
       testStore.dispatch({ type: 'test/action2' });
       
@@ -173,9 +154,7 @@ describe('Store Configuration', () => {
 
     it('handles state updates correctly', () => {
       const testStore = setupStore();
-      const initialState = testStore.getState();
-      
-      // Dispatch an action that should update state
+      const initialState = testStore.getState();
       testStore.dispatch(recommendationApi.util.resetApiState());
       
       const newState = testStore.getState();
@@ -198,8 +177,7 @@ describe('Store Configuration', () => {
       
       try {
         testStore.dispatch({ type: 'invalid/action' });
-      } catch (error) {
-        // Should not throw, but if it does, store should still be valid
+      } catch (error) {
       }
       
       const state = testStore.getState();

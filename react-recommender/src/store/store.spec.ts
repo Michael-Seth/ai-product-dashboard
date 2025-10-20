@@ -7,8 +7,7 @@ describe('store', () => {
     expect(state[recommendationApi.reducerPath]).toBeDefined();
   });
 
-  it('should be configured with RTK Query middleware', () => {
-    // Test that the store is properly configured by checking if it has the expected structure
+  it('should be configured with RTK Query middleware', () => {
     expect(store.dispatch).toBeDefined();
     expect(store.getState).toBeDefined();
     expect(store.subscribe).toBeDefined();

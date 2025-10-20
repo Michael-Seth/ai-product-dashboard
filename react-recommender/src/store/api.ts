@@ -1,7 +1,5 @@
 import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
-import { RecommendationResponse, APIError, isAPIError } from '@ai-product-dashboard/shared-types';
-
-// Enhanced base query with error handling and retry logic
+import { RecommendationResponse, APIError, isAPIError } from '@ai-product-dashboard/shared-types';
 const baseQueryWithRetry: BaseQueryFn<
   string | FetchArgs,
   unknown,
@@ -12,36 +10,27 @@ const baseQueryWithRetry: BaseQueryFn<
     timeout: 15000, // 15 second timeout
   });
 
-  let result = await baseQuery(args, api, extraOptions);
-
-  // Retry logic for network errors
+  let result = await baseQuery(args, api, extraOptions);
   if (result.error && result.error.status === 'FETCH_ERROR') {
-    console.warn('Network error detected, retrying request...');
-    // Wait 1 second before retry
+    console.warn('Network error detected, retrying request...');
     await new Promise(resolve => setTimeout(resolve, 1000));
     result = await baseQuery(args, api, extraOptions);
-  }
-
-  // Handle server errors with retry
+  }
   if (result.error && typeof result.error.status === 'number' && result.error.status >= 500) {
-    console.warn(`Server error ${result.error.status} detected, retrying request...`);
-    // Wait 2 seconds before retry for server errors
+    console.warn(`Server error ${result.error.status} detected, retrying request...`);
     await new Promise(resolve => setTimeout(resolve, 2000));
     result = await baseQuery(args, api, extraOptions);
   }
 
   return result;
-};
-
-// Create the API slice
+};
 export const recommendationApi = createApi({
   reducerPath: 'recommendationApi',
   baseQuery: baseQueryWithRetry,
   tagTypes: ['Recommendation'],
   endpoints: (builder) => ({
     getRecommendations: builder.query<RecommendationResponse, string>({
-      query: (productName) => {
-        // Input validation
+      query: (productName) => {
         if (!productName || typeof productName !== 'string' || productName.trim().length === 0) {
           throw new Error('Product name is required and must be a non-empty string');
         }
@@ -56,13 +45,10 @@ export const recommendationApi = createApi({
         };
       },
       providesTags: ['Recommendation'],
-      transformResponse: (response: unknown): RecommendationResponse => {
-        // Validate response structure
+      transformResponse: (response: unknown): RecommendationResponse => {
         if (!response || typeof response !== 'object') {
           throw new Error('Invalid response format');
-        }
-
-        // Check if it's an error response
+        }
         if (isAPIError(response)) {
           throw new Error(response.message || response.error);
         }

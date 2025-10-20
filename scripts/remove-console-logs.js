@@ -46,12 +46,8 @@ class ConsoleLogRemover {
         'console.group': 0,
         'console.time': 0
       }
-    };
-    
-    // File extensions to process
-    this.extensions = ['.ts', '.js', '.tsx', '.jsx'];
-    
-    // Directories to exclude
+    };
+    this.extensions = ['.ts', '.js', '.tsx', '.jsx'];
     this.excludeDirs = [
       'node_modules',
       'dist',
@@ -61,18 +57,14 @@ class ConsoleLogRemover {
       '.angular',
       'tmp',
       'build'
-    ];
-    
-    // Files to exclude
+    ];
     this.excludeFiles = [
       'package.json',
       'package-lock.json',
       'tsconfig.json',
       'angular.json',
       'nx.json'
-    ];
-
-    // Console methods to target
+    ];
     this.consoleMethods = this.options.removeAll 
       ? ['log', 'debug', 'info', 'warn', 'error', 'trace', 'table', 'group', 'groupEnd', 'time', 'timeEnd']
       : this.options.preserveErrors 
@@ -114,8 +106,7 @@ class ConsoleLogRemover {
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
       
-      if (entry.isDirectory()) {
-        // Skip excluded directories
+      if (entry.isDirectory()) {
         if (this.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
             console.log(`⏭️  Skipping directory: ${fullPath}`);
@@ -135,14 +126,10 @@ class ConsoleLogRemover {
    */
   async processFile(filePath) {
     const fileName = path.basename(filePath);
-    const fileExt = path.extname(filePath);
-    
-    // Skip excluded files
+    const fileExt = path.extname(filePath);
     if (this.excludeFiles.includes(fileName)) {
       return;
-    }
-    
-    // Only process supported file types
+    }
     if (!this.extensions.includes(fileExt)) {
       return;
     }
@@ -162,9 +149,7 @@ class ConsoleLogRemover {
         
         if (!this.options.dryRun) {
           fs.writeFileSync(filePath, processedContent, 'utf8');
-        }
-        
-        // Count removed lines
+        }
         const originalLines = originalContent.split('\n').length;
         const processedLines = processedContent.split('\n').length;
         this.stats.linesRemoved += (originalLines - processedLines);
@@ -179,32 +164,20 @@ class ConsoleLogRemover {
    */
   removeConsoleStatements(content) {
     let result = content;
-    let totalRemoved = 0;
-
-    // Create regex pattern for console methods
-    const methodsPattern = this.consoleMethods.join('|');
-    
-    // Pattern to match console statements
-    // Matches: console.log(...), console.error(...), etc.
-    // Handles multi-line statements and various formatting
+    let totalRemoved = 0;
+    const methodsPattern = this.consoleMethods.join('|');
     const consoleRegex = new RegExp(
       `^(\\s*)console\\.(${methodsPattern})\\s*\\([^;]*?\\);?\\s*$`,
       'gm'
-    );
-
-    // More comprehensive pattern for complex console statements
+    );
     const complexConsoleRegex = new RegExp(
       `^(\\s*)console\\.(${methodsPattern})\\s*\\((?:[^)(]|\\([^)]*\\))*\\);?\\s*$`,
       'gm'
-    );
-
-    // Pattern for multi-line console statements
+    );
     const multiLineConsoleRegex = new RegExp(
       `^(\\s*)console\\.(${methodsPattern})\\s*\\([\\s\\S]*?\\);?\\s*$`,
       'gm'
-    );
-
-    // Remove simple console statements
+    );
     result = result.replace(consoleRegex, (match, indent, method) => {
       if (this.shouldPreserveConsoleStatement(match, method)) {
         return match;
@@ -213,9 +186,7 @@ class ConsoleLogRemover {
       this.stats.byType[`console.${method}`]++;
       totalRemoved++;
       return '';
-    });
-
-    // Remove complex console statements (with nested parentheses)
+    });
     result = result.replace(complexConsoleRegex, (match, indent, method) => {
       if (this.shouldPreserveConsoleStatement(match, method)) {
         return match;
@@ -224,12 +195,8 @@ class ConsoleLogRemover {
       this.stats.byType[`console.${method}`]++;
       totalRemoved++;
       return '';
-    });
-
-    // Handle multi-line console statements
-    result = this.removeMultiLineConsoleStatements(result, totalRemoved);
-
-    // Clean up empty lines
+    });
+    result = this.removeMultiLineConsoleStatements(result, totalRemoved);
     result = result.replace(/\n\s*\n\s*\n/g, '\n\n');
 
     this.stats.consoleStatementsRemoved += totalRemoved;
@@ -247,9 +214,7 @@ class ConsoleLogRemover {
 
     while (i < lines.length) {
       const line = lines[i];
-      const trimmedLine = line.trim();
-      
-      // Check if line starts a console statement
+      const trimmedLine = line.trim();
       const consoleMatch = trimmedLine.match(new RegExp(`^console\\.(${this.consoleMethods.join('|')})\\s*\\(`));
       
       if (consoleMatch) {
@@ -259,9 +224,7 @@ class ConsoleLogRemover {
           result.push(line);
           i++;
           continue;
-        }
-
-        // Find the end of the console statement
+        }
         let openParens = 0;
         let inString = false;
         let stringChar = '';
@@ -322,34 +285,7 @@ class ConsoleLogRemover {
    */
   shouldPreserveConsoleStatement(statement, method) {
     // Always preserve if inside comments
-    if (statement.includes('//') || statement.includes('/*')) {
-      const commentIndex = Math.min(
-        statement.indexOf('//') !== -1 ? statement.indexOf('//') : Infinity,
-        statement.indexOf('/*') !== -1 ? statement.indexOf('/*') : Infinity
-      );
-      const consoleIndex = statement.indexOf('console.');
-      
-      if (commentIndex < consoleIndex) {
-        return true;
-      }
-    }
-
-    // Preserve error and warn if option is set
-    if (this.options.preserveErrors && (method === 'error' || method === 'warn')) {
-      return true;
-    }
-
-    // Preserve if it's in a string literal
-    if (this.isInStringLiteral(statement)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * Check if console statement is inside a string literal
-   */
+    if (statement.includes('//') || statement.includes('
   isInStringLiteral(statement) {
     const consoleIndex = statement.indexOf('console.');
     const beforeConsole = statement.substring(0, consoleIndex);
@@ -457,13 +393,9 @@ Safety features:
   🔒 Detailed logging and statistics
 `);
   }
-}
-
-// CLI Interface
+}
 function main() {
-  const args = process.argv.slice(2);
-  
-  // Parse command line arguments
+  const args = process.argv.slice(2);
   const options = {
     dryRun: args.includes('--dry-run'),
     preserve: !args.includes('--all'), // Preserve errors unless --all is specified
@@ -479,12 +411,8 @@ function main() {
   
   const remover = new ConsoleLogRemover(options);
   remover.removeConsoleLogsFromCodebase();
-}
-
-// Export for testing
-module.exports = ConsoleLogRemover;
-
-// Run if called directly
+}
+module.exports = ConsoleLogRemover;
 if (require.main === module) {
   main();
 }

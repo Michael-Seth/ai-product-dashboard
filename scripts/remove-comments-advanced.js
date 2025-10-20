@@ -12,7 +12,7 @@
  * Options:
  *   --config <path>  Use custom configuration file
  *   --dry-run        Show what would be changed without modifying files
- *   --preserve       Preserve JSDoc comments (/** ... */)
+ *   --preserve       Preserve JSDoc comments (/** ... 
  *   --verbose        Show detailed output
  *   --pattern <glob> Process only files matching pattern
  *   --exclude <glob> Exclude files matching pattern
@@ -21,12 +21,12 @@
 
 const fs = require('fs');
 const path = require('path');
-// Note: glob is optional - will use simple directory traversal if not available
+
 let glob;
 try {
   glob = require('glob').glob;
 } catch (e) {
-  // Fallback to simple directory traversal
+
   glob = null;
 }
 
@@ -40,8 +40,7 @@ class AdvancedCommentRemover {
       exclude: options.exclude || null,
       ...options
     };
-    
-    // Load configuration
+
     this.config = this.loadConfig();
     
     this.stats = {
@@ -66,8 +65,7 @@ class AdvancedCommentRemover {
     } catch (error) {
       console.warn(`⚠️  Could not load config file: ${error.message}`);
     }
-    
-    // Return default configuration
+
     return require('./remove-comments.config.js');
   }
 
@@ -110,10 +108,10 @@ class AdvancedCommentRemover {
    */
   async processDirectory(dirPath) {
     if (glob && this.options.pattern) {
-      // Use glob if available and pattern specified
+
       await this.processDirectoryWithGlob(dirPath);
     } else {
-      // Use simple directory traversal
+
       await this.processDirectorySimple(dirPath);
     }
   }
@@ -122,11 +120,7 @@ class AdvancedCommentRemover {
    * Process directory with glob patterns
    */
   async processDirectoryWithGlob(dirPath) {
-    const pattern = this.options.pattern || `**/*.{${this.config.extensions.map(ext => ext.slice(1)).join(',')}}`;
-    const fullPattern = path.join(dirPath, pattern);
-    
-    const ignore = [
-      ...this.config.excludeDirs.map(dir => `**/${dir}/**`),
+    const pattern = this.options.pattern || `**${dir}/**`),
       ...this.config.excludeFiles.map(file => `**/${file}`)
     ];
     
@@ -159,7 +153,7 @@ class AdvancedCommentRemover {
       const fullPath = path.join(dirPath, entry.name);
       
       if (entry.isDirectory()) {
-        // Skip excluded directories
+
         if (this.config.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
             console.log(`⏭️  Skipping directory: ${fullPath}`);
@@ -169,12 +163,11 @@ class AdvancedCommentRemover {
         
         await this.processDirectorySimple(fullPath);
       } else if (entry.isFile()) {
-        // Skip excluded files
+
         if (this.config.excludeFiles.includes(entry.name)) {
           continue;
         }
-        
-        // Check extension
+
         const fileExt = path.extname(entry.name);
         if (this.config.extensions.includes(fileExt)) {
           await this.processFile(fullPath);
@@ -189,15 +182,13 @@ class AdvancedCommentRemover {
   async processFile(filePath) {
     const fileName = path.basename(filePath);
     const fileExt = path.extname(filePath);
-    
-    // Skip if extension not supported
+
     if (!this.config.extensions.includes(fileExt)) {
       return;
     }
     
     this.stats.filesProcessed++;
-    
-    // Initialize file type stats
+
     if (!this.stats.byFileType[fileExt]) {
       this.stats.byFileType[fileExt] = {
         processed: 0,
@@ -220,15 +211,14 @@ class AdvancedCommentRemover {
         }
         
         if (!this.options.dryRun) {
-          // Create backup if needed
+
           if (this.config.output.createBackups) {
             fs.writeFileSync(`${filePath}.backup`, originalContent, 'utf8');
           }
           
           fs.writeFileSync(filePath, processedContent, 'utf8');
         }
-        
-        // Count removed lines
+
         const originalLines = originalContent.split('\n').length;
         const processedLines = processedContent.split('\n').length;
         this.stats.linesRemoved += (originalLines - processedLines);
@@ -243,8 +233,7 @@ class AdvancedCommentRemover {
    */
   removeCommentsFromContent(content, fileExt, filePath) {
     const fileName = path.basename(filePath);
-    
-    // Check for special file patterns
+
     const filePattern = this.getFilePattern(fileName);
     
     switch (fileExt) {
@@ -284,22 +273,19 @@ class AdvancedCommentRemover {
     let commentsRemoved = 0;
     
     const rules = this.config.customRules['.ts'] || {};
-    
-    // Remove single-line comments
+
     result = result.replace(/^(\s*)\/\/(?!\s*@|\s*eslint|\s*prettier).*$/gm, (match, indent) => {
-      // Check preserve patterns
+
       for (const pattern of this.config.preservePatterns.js) {
         if (pattern.test(match)) {
           return match;
         }
       }
-      
-      // Preserve TODOs if configured
+
       if (rules.preserveTodos && /\/\/\s*(TODO|FIXME|NOTE):/i.test(match)) {
         return match;
       }
-      
-      // Skip if inside string
+
       if (this.isInsideString(content, content.indexOf(match))) {
         return match;
       }
@@ -307,17 +293,15 @@ class AdvancedCommentRemover {
       commentsRemoved++;
       return '';
     });
-    
-    // Remove multi-line comments
+
     result = result.replace(/\/\*[\s\S]*?\*\//g, (match) => {
-      // Check preserve patterns
+
       for (const pattern of this.config.preservePatterns.js) {
         if (pattern.test(match)) {
           return match;
         }
       }
-      
-      // Preserve JSDoc if configured
+
       if (rules.preserveJSDoc && match.startsWith('/**')) {
         return match;
       }
@@ -325,8 +309,7 @@ class AdvancedCommentRemover {
       commentsRemoved++;
       return '';
     });
-    
-    // Clean up formatting
+
     result = this.cleanupFormatting(result);
     
     this.stats.commentsRemoved += commentsRemoved;
@@ -341,7 +324,7 @@ class AdvancedCommentRemover {
    * Remove JavaScript comments
    */
   removeJavaScriptComments(content, filePattern) {
-    // Similar to TypeScript but with JS-specific rules
+
     return this.removeTypeScriptComments(content, filePattern);
   }
 
@@ -353,20 +336,18 @@ class AdvancedCommentRemover {
     const rules = this.config.customRules['.html'] || {};
     
     const result = content.replace(/<!--[\s\S]*?-->/g, (match) => {
-      // Check preserve patterns
+
       for (const pattern of this.config.preservePatterns.html) {
         if (pattern.test(match)) {
           return match;
         }
       }
-      
-      // Preserve Angular comments if configured
+
       if (rules.preserveAngularComments && 
           (match.includes('ng-') || match.includes('angular'))) {
         return match;
       }
-      
-      // Preserve conditional comments if configured
+
       if (rules.preserveConditionalComments && match.includes('[if ')) {
         return match;
       }
@@ -391,14 +372,13 @@ class AdvancedCommentRemover {
     const rules = this.config.customRules['.css'] || this.config.customRules['.scss'] || {};
     
     const result = content.replace(/\/\*[\s\S]*?\*\//g, (match) => {
-      // Check preserve patterns
+
       for (const pattern of this.config.preservePatterns.css) {
         if (pattern.test(match)) {
           return match;
         }
       }
-      
-      // Preserve license headers if configured
+
       if (rules.preserveLicenseHeaders && 
           (match.toLowerCase().includes('license') || 
            match.toLowerCase().includes('copyright'))) {
@@ -422,7 +402,7 @@ class AdvancedCommentRemover {
    * Clean up formatting after comment removal
    */
   cleanupFormatting(content) {
-    // Remove excessive empty lines
+
     return content
       .replace(/\n\s*\n\s*\n/g, '\n\n')  // Max 2 consecutive empty lines
       .replace(/^\s*\n/, '')  // Remove leading empty lines

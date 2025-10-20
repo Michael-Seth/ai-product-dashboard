@@ -17,8 +17,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
   constructor(private productService: ProductService) {}
 
-  ngOnInit(): void {
-    // Subscribe to selected product changes
+  ngOnInit(): void {
     this.subscription.add(
       this.productService.selectedProduct$.subscribe(product => {
         this.selectedProduct = product;

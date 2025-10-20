@@ -14,8 +14,7 @@ export class CartService {
   private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
 
-  constructor() {
-    // Load cart from localStorage on initialization
+  constructor() {
     this.loadCartFromStorage();
   }
 
@@ -43,11 +42,9 @@ export class CartService {
     const currentItems = this.cartItemsSubject.value;
     const existingItemIndex = currentItems.findIndex(item => item.product.id === product.id);
 
-    if (existingItemIndex >= 0) {
-      // Update quantity if item already exists
+    if (existingItemIndex >= 0) {
       currentItems[existingItemIndex].quantity += quantity;
-    } else {
-      // Add new item
+    } else {
       currentItems.push({ product, quantity });
     }
 

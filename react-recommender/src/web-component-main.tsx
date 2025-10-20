@@ -4,9 +4,6 @@
  */
 
 import './web-component/index';
-import './styles.css';
-
-// The custom element is automatically registered when the web-component module is imported
-// Angular can now use <react-recommender product="..."></react-recommender>
+import './styles.css';
 
 console.log('React Recommender Web Component registered as "react-recommender"');

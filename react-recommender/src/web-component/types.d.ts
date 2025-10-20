@@ -13,9 +13,7 @@ declare global {
       };
     }
   }
-}
-
-// Extend HTMLElementTagNameMap for TypeScript
+}
 declare global {
   interface HTMLElementTagNameMap {
     'react-recommender': HTMLElement & {

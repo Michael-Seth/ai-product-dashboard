@@ -34,12 +34,8 @@ class CommentRemover {
       filesModified: 0,
       commentsRemoved: 0,
       linesRemoved: 0
-    };
-    
-    // File extensions to process
-    this.extensions = ['.ts', '.js', '.html', '.css', '.scss', '.jsx', '.tsx'];
-    
-    // Directories to exclude
+    };
+    this.extensions = ['.ts', '.js', '.html', '.css', '.scss', '.jsx', '.tsx'];
     this.excludeDirs = [
       'node_modules',
       'dist',
@@ -49,9 +45,7 @@ class CommentRemover {
       '.angular',
       'tmp',
       'build'
-    ];
-    
-    // Files to exclude
+    ];
     this.excludeFiles = [
       'package.json',
       'package-lock.json',
@@ -92,8 +86,7 @@ class CommentRemover {
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
       
-      if (entry.isDirectory()) {
-        // Skip excluded directories
+      if (entry.isDirectory()) {
         if (this.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
             console.log(`⏭️  Skipping directory: ${fullPath}`);
@@ -113,14 +106,10 @@ class CommentRemover {
    */
   async processFile(filePath) {
     const fileName = path.basename(filePath);
-    const fileExt = path.extname(filePath);
-    
-    // Skip excluded files
+    const fileExt = path.extname(filePath);
     if (this.excludeFiles.includes(fileName)) {
       return;
-    }
-    
-    // Only process supported file types
+    }
     if (!this.extensions.includes(fileExt)) {
       return;
     }
@@ -140,9 +129,7 @@ class CommentRemover {
         
         if (!this.options.dryRun) {
           fs.writeFileSync(filePath, processedContent, 'utf8');
-        }
-        
-        // Count removed lines
+        }
         const originalLines = originalContent.split('\n').length;
         const processedLines = processedContent.split('\n').length;
         this.stats.linesRemoved += (originalLines - processedLines);
@@ -177,12 +164,8 @@ class CommentRemover {
    */
   removeJSComments(content) {
     let result = content;
-    let commentsRemoved = 0;
-    
-    // Remove single-line comments (// ...)
-    // But preserve URLs and other important // patterns
-    result = result.replace(/^(\s*)\/\/(?!\s*@|\s*eslint|\s*prettier|\s*webpack|\s*vite).*$/gm, (match, indent) => {
-      // Preserve if it's inside a string or has special meaning
+    let commentsRemoved = 0;
+    result = result.replace(/^(\s*)\/\/(?!\s*@|\s*eslint|\s*prettier|\s*webpack|\s*vite).*$/gm, (match, indent) => {
       if (this.isInsideString(content, content.indexOf(match))) {
         return match;
       }
@@ -190,7 +173,7 @@ class CommentRemover {
       return '';
     });
     
-    // Remove multi-line comments (/* ... */)
+    // Remove multi-line comments ()
     // But preserve JSDoc comments if option is set
     result = result.replace(/\/\*[\s\S]*?\*\//g, (match) => {
       // Preserve JSDoc comments if option is enabled
@@ -247,7 +230,7 @@ class CommentRemover {
   removeCSSComments(content) {
     let commentsRemoved = 0;
     
-    // Remove CSS comments /* ... */
+    // Remove CSS comments 
     const result = content.replace(/\/\*[\s\S]*?\*\//g, (match) => {
       // Preserve license headers
       if (match.toLowerCase().includes('license') || 
@@ -281,7 +264,7 @@ class CommentRemover {
   printSummary() {
     console.log('\n📊 Comment Removal Summary:');
     console.log('═'.repeat(40));
-    console.log(` iles processed: ${this.stats.filesProcessed}`);
+    console.log(` Files processed: ${this.stats.filesProcessed}`);
     console.log(`  Files modified: ${this.stats.filesModified}`);
     console.log(` Comments removed: ${this.stats.commentsRemoved}`);
     console.log(` Lines removed: ${this.stats.linesRemoved}`);

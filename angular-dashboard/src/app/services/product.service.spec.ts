@@ -69,13 +69,9 @@ describe('ProductService', () => {
 
     it('should allow clearing selection by passing null', () => {
       const products = service.getProducts();
-      const testProduct = products[0];
-      
-      // First select a product
+      const testProduct = products[0];
       service.selectProduct(testProduct);
-      expect(service.getSelectedProduct()).toEqual(testProduct);
-      
-      // Then clear selection
+      expect(service.getSelectedProduct()).toEqual(testProduct);
       service.selectProduct(null);
       expect(service.getSelectedProduct()).toBeNull();
     });
@@ -141,8 +137,7 @@ describe('ProductService', () => {
           expect(product).toBeNull();
           service.selectProduct(testProduct);
         } else if (emissionCount === 2) {
-          expect(product).toEqual(testProduct);
-          // Select same product again - BehaviorSubject will emit again
+          expect(product).toEqual(testProduct);
           service.selectProduct(testProduct);
         } else if (emissionCount === 3) {
           expect(product).toEqual(testProduct);
@@ -162,9 +157,7 @@ describe('ProductService', () => {
         if (emissionCount === expectedProducts.length) {
           done();
         }
-      });
-
-      // Rapid fire selections
+      });
       service.selectProduct(products[0]);
       service.selectProduct(products[1]);
       service.selectProduct(products[2]);
@@ -178,9 +171,7 @@ describe('ProductService', () => {
       const products2 = service.getProducts();
       
       expect(products1).toEqual(products2);
-      expect(products1.length).toBe(products2.length);
-      
-      // Verify each product has consistent data
+      expect(products1.length).toBe(products2.length);
       products1.forEach((product, index) => {
         expect(product).toEqual(products2[index]);
         expect(product.id).toBe(products2[index].id);

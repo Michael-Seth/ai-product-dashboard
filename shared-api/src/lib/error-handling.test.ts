@@ -1,7 +1,5 @@
 import { recommendProducts, mockRecommend, resetOpenAIClient } from './shared-api';
-import { Product, isAPIError } from '@ai-product-dashboard/shared-types';
-
-// Mock OpenAI to test error scenarios
+import { Product, isAPIError } from '@ai-product-dashboard/shared-types';
 jest.mock('openai');
 
 describe('Error Handling Tests', () => {
@@ -83,8 +81,7 @@ describe('Error Handling Tests', () => {
   });
 
   describe('Network Error Handling', () => {
-    it('should fall back to mock recommendations on network error', async () => {
-      // Mock OpenAI to throw network error
+    it('should fall back to mock recommendations on network error', async () => {
       const mockOpenAI = require('openai');
       mockOpenAI.mockImplementation(() => ({
         chat: {
@@ -92,9 +89,7 @@ describe('Error Handling Tests', () => {
             create: jest.fn().mockRejectedValue(new Error('network error'))
           }
         }
-      }));
-
-      // Set environment variable to enable OpenAI client
+      }));
       process.env.OPENAI_API_KEY = 'test-key';
 
       const product: Product = {
@@ -300,8 +295,7 @@ describe('Error Handling Tests', () => {
   });
 
   describe('Extreme Error Scenarios', () => {
-    it('should handle complete service failure gracefully', async () => {
-      // Mock both OpenAI and mock function to fail
+    it('should handle complete service failure gracefully', async () => {
       const mockOpenAI = require('openai');
       mockOpenAI.mockImplementation(() => {
         throw new Error('Complete service failure');
@@ -317,9 +311,7 @@ describe('Error Handling Tests', () => {
         imageUrl: 'test.jpg'
       };
 
-      const result = await recommendProducts(product);
-      
-      // Should still provide mock recommendations
+      const result = await recommendProducts(product);
       expect(isAPIError(result)).toBe(false);
       if (!isAPIError(result)) {
         expect(result.recommendations).toBeDefined();

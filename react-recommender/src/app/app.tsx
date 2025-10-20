@@ -5,7 +5,6 @@ import { Recommender } from './components';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { store } from '../store';
 
-// Sample product for testing
 const sampleProduct: Product = {
   id: 1,
   name: 'MacBook Air M2',
@@ -25,7 +24,7 @@ function AppContent() {
         </h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Test Controls */}
+          {}
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold mb-4">Test Controls</h2>
             <div className="space-y-4">
@@ -51,7 +50,7 @@ function AppContent() {
             )}
           </div>
 
-          {/* Recommender Widget with Error Boundary */}
+          {}
           <div className="bg-white rounded-lg shadow">
             <ErrorBoundary fallback={
               <div className="p-6 text-center bg-red-50 border border-red-200 rounded-lg">

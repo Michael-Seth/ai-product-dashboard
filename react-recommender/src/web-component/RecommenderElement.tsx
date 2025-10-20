@@ -16,8 +16,7 @@ export class RecommenderElement extends HTMLElement {
   private renderTimeout: NodeJS.Timeout | null = null;
 
   constructor() {
-    super();
-    // Set display style for proper layout
+    super();
     this.style.display = 'block';
     this.style.width = '100%';
     console.log('RecommenderElement constructor called');
@@ -47,15 +46,11 @@ export class RecommenderElement extends HTMLElement {
    * Called when the element is removed from the DOM
    */
   disconnectedCallback() {
-    console.log('RecommenderElement disconnected from DOM');
-    
-    // Clear any pending render timeout
+    console.log('RecommenderElement disconnected from DOM');
     if (this.renderTimeout) {
       clearTimeout(this.renderTimeout);
       this.renderTimeout = null;
-    }
-
-    // Safely unmount React component
+    }
     try {
       if (this.root) {
         this.root.unmount();
@@ -71,8 +66,7 @@ export class RecommenderElement extends HTMLElement {
    */
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     console.log(`RecommenderElement attribute ${name} changed from ${oldValue} to ${newValue}`);
-    if (name === 'product' && oldValue !== newValue) {
-      // Debounce rapid attribute changes
+    if (name === 'product' && oldValue !== newValue) {
       if (this.renderTimeout) {
         clearTimeout(this.renderTimeout);
       }
@@ -99,9 +93,7 @@ export class RecommenderElement extends HTMLElement {
     }
 
     try {
-      const parsed = JSON.parse(productAttr);
-      
-      // Validate parsed product structure
+      const parsed = JSON.parse(productAttr);
       if (!parsed || typeof parsed !== 'object') {
         throw new Error('Product must be an object');
       }
@@ -163,8 +155,7 @@ export class RecommenderElement extends HTMLElement {
   private render() {
     console.log('RecommenderElement render called');
     
-    try {
-      // Create root container if it doesn't exist
+    try {
       if (!this.root) {
         // Clear any existing content
         this.innerHTML = '';

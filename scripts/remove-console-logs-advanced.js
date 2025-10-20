@@ -34,9 +34,7 @@ class AdvancedConsoleLogRemover {
       removeAll: options.removeAll || false,
       pattern: options.pattern || null,
       ...options
-    };
-    
-    // Load configuration
+    };
     this.config = this.loadConfig();
     
     this.stats = {
@@ -47,9 +45,7 @@ class AdvancedConsoleLogRemover {
       byMethod: {},
       byFileType: {},
       preserved: 0
-    };
-    
-    // Initialize method stats
+    };
     const allMethods = [
       ...this.config.consoleMethods.remove,
       ...this.config.consoleMethods.preserve,
@@ -73,9 +69,7 @@ class AdvancedConsoleLogRemover {
       }
     } catch (error) {
       console.warn(`⚠️  Could not load config file: ${error.message}`);
-    }
-    
-    // Return default configuration
+    }
     return require('./remove-console-logs.config.js');
   }
 
@@ -124,8 +118,7 @@ class AdvancedConsoleLogRemover {
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
       
-      if (entry.isDirectory()) {
-        // Skip excluded directories
+      if (entry.isDirectory()) {
         if (this.config.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
             console.log(`⏭️  Skipping directory: ${fullPath}`);
@@ -145,26 +138,18 @@ class AdvancedConsoleLogRemover {
    */
   async processFile(filePath) {
     const fileName = path.basename(filePath);
-    const fileExt = path.extname(filePath);
-    
-    // Skip excluded files
+    const fileExt = path.extname(filePath);
     if (this.config.excludeFiles.includes(fileName)) {
       return;
-    }
-    
-    // Only process supported file types
+    }
     if (!this.config.extensions.includes(fileExt)) {
       return;
-    }
-    
-    // Apply pattern filter if specified
+    }
     if (this.options.pattern && !fileName.match(new RegExp(this.options.pattern))) {
       return;
     }
     
-    this.stats.filesProcessed++;
-    
-    // Initialize file type stats
+    this.stats.filesProcessed++;
     if (!this.stats.byFileType[fileExt]) {
       this.stats.byFileType[fileExt] = {
         processed: 0,
@@ -186,16 +171,13 @@ class AdvancedConsoleLogRemover {
           console.log(`📝 Processing: ${filePath}`);
         }
         
-        if (!this.options.dryRun) {
-          // Create backup if configured
+        if (!this.options.dryRun) {
           if (this.config.output.createBackups) {
             fs.writeFileSync(`${filePath}.backup`, originalContent, 'utf8');
           }
           
           fs.writeFileSync(filePath, processedContent, 'utf8');
-        }
-        
-        // Count removed lines
+        }
         const originalLines = originalContent.split('\n').length;
         const processedLines = processedContent.split('\n').length;
         const linesRemoved = originalLines - processedLines;
@@ -216,24 +198,16 @@ class AdvancedConsoleLogRemover {
     const envRule = this.config.environments[this.options.environment] || {};
     
     let result = content;
-    let totalRemoved = 0;
-    
-    // Determine which console methods to remove
+    let totalRemoved = 0;
     const methodsToRemove = this.getMethodsToRemove(fileRule, envRule);
     
     if (methodsToRemove.length === 0) {
       return content;
-    }
-    
-    // Create regex pattern for console methods
-    const methodsPattern = methodsToRemove.join('|');
-    
-    // Handle different types of console statements
+    }
+    const methodsPattern = methodsToRemove.join('|');
     result = this.removeSimpleConsoleStatements(result, methodsPattern);
     result = this.removeComplexConsoleStatements(result, methodsPattern);
-    result = this.removeMultiLineConsoleStatements(result, methodsPattern);
-    
-    // Handle advanced patterns if configured
+    result = this.removeMultiLineConsoleStatements(result, methodsPattern);
     if (this.config.advanced.handleTemplateLiterals) {
       result = this.removeConsoleInTemplateLiterals(result, methodsPattern);
     }
@@ -244,9 +218,7 @@ class AdvancedConsoleLogRemover {
     
     if (this.config.advanced.handleChainedCalls) {
       result = this.removeChainedConsoleCalls(result, methodsPattern);
-    }
-    
-    // Clean up formatting
+    }
     if (this.config.replacement.cleanupEmptyLines) {
       result = this.cleanupEmptyLines(result);
     }
@@ -270,28 +242,21 @@ class AdvancedConsoleLogRemover {
    * Determine which console methods to remove based on rules
    */
   getMethodsToRemove(fileRule, envRule) {
-    let methodsToRemove = [...this.config.consoleMethods.remove];
-    
-    // Apply environment rules
+    let methodsToRemove = [...this.config.consoleMethods.remove];
     if (this.options.removeAll || envRule.removeAll) {
       methodsToRemove = [
         ...this.config.consoleMethods.remove,
         ...this.config.consoleMethods.preserve,
         ...this.config.consoleMethods.conditionalRemove
       ];
-    } else {
-      // Add conditional methods based on environment
+    } else {
       if (this.options.environment === 'production') {
         methodsToRemove.push(...this.config.consoleMethods.conditionalRemove);
-      }
-      
-      // Remove preserve methods if not preserving errors
+      }
       if (!this.options.preserveErrors && !envRule.preserveErrors) {
         methodsToRemove.push(...this.config.consoleMethods.preserve);
       }
-    }
-    
-    // Apply file-specific rules
+    }
     if (fileRule) {
       if (fileRule.preserveAll) {
         return [];
@@ -386,13 +351,10 @@ class AdvancedConsoleLogRemover {
           result.push(line);
           i++;
           continue;
-        }
-
-        // Find the end of the multi-line console statement
+        }
         const endIndex = this.findConsoleStatementEnd(lines, i);
         
-        if (endIndex > i) {
-          // Skip all lines from i to endIndex
+        if (endIndex > i) {
           this.stats.byMethod[method].removed++;
           this.stats.consoleStatementsRemoved++;
           i = endIndex + 1;

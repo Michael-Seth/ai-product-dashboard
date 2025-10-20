@@ -6,10 +6,7 @@ export default defineConfig(() => ({
   root: __dirname,
   cacheDir: './node_modules/.vite/ai-product-dashboard',
   plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
+
   test: {
     name: 'ai-product-dashboard',
     watch: false,

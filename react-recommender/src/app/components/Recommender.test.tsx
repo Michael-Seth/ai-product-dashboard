@@ -4,16 +4,12 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { recommendationApi } from '../../store/api';
 import { Recommender } from './Recommender';
-import { Product, Recommendation } from '@ai-product-dashboard/shared-types';
-
-// Mock the API hook
+import { Product, Recommendation } from '@ai-product-dashboard/shared-types';
 const mockUseGetRecommendationsQuery = jest.fn();
 jest.mock('../../store/api', () => ({
     ...jest.requireActual('../../store/api'),
     useGetRecommendationsQuery: mockUseGetRecommendationsQuery,
-}));
-
-// Mock store setup for testing
+}));
 const createMockStore = () => {
     return configureStore({
         reducer: {
@@ -22,9 +18,7 @@ const createMockStore = () => {
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware().concat(recommendationApi.middleware),
     });
-};
-
-// Test data
+};
 const mockProduct: Product = {
     id: 1,
     name: 'MacBook Pro',
@@ -70,13 +64,9 @@ describe('Recommender Component', () => {
 
             expect(screen.getByText('Finding Recommendations')).toBeInTheDocument();
             expect(screen.getByText(/Our AI is analyzing your selection/)).toBeInTheDocument();
-            expect(screen.getByText(/to find the perfect matches/)).toBeInTheDocument();
-
-            // Check for loading spinner
+            expect(screen.getByText(/to find the perfect matches/)).toBeInTheDocument();
             const spinner = document.querySelector('.loading-spinner');
-            expect(spinner).toBeInTheDocument();
-
-            // Check for animated dots
+            expect(spinner).toBeInTheDocument();
             const animatedDots = document.querySelectorAll('.animate-bounce');
             expect(animatedDots.length).toBeGreaterThanOrEqual(3);
         });
@@ -171,8 +161,7 @@ describe('Recommender Component', () => {
             expect(screen.getByText('Unknown error occurred')).toBeInTheDocument();
         });
 
-        it('provides reload page functionality', () => {
-            // Mock window.location.reload
+        it('provides reload page functionality', () => {
             const mockReload = jest.fn();
             Object.defineProperty(window, 'location', {
                 value: { reload: mockReload },

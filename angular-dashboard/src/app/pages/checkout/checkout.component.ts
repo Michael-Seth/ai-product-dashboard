@@ -254,9 +254,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   placeOrder(): void {
-    this.isProcessing = true;
-    
-    // Simulate order processing
+    this.isProcessing = true;
     setTimeout(() => {
       this.cartService.clearCart();
       this.router.navigate(['/success']);

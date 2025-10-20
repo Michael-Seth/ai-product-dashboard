@@ -41,9 +41,7 @@ async function runTests() {
     console.log('-'.repeat(50));
 
     try {
-      const startTime = Date.now();
-      
-      // Run the specific test file
+      const startTime = Date.now();
       const output = execSync(
         `npx jest integration-tests/${suite.file} --verbose --no-cache`,
         { 
@@ -54,9 +52,7 @@ async function runTests() {
       );
 
       const endTime = Date.now();
-      const duration = endTime - startTime;
-
-      // Parse Jest output for test counts
+      const duration = endTime - startTime;
       const testMatches = output.match(/(\d+) passed/);
       const suitePassedTests = testMatches ? parseInt(testMatches[1]) : 0;
       
@@ -74,9 +70,7 @@ async function runTests() {
       console.log(`✅ ${suite.name}: ${suitePassedTests} tests passed (${duration}ms)`);
 
     } catch (error) {
-      const errorOutput = error.stdout || error.stderr || error.message;
-      
-      // Try to extract test counts from error output
+      const errorOutput = error.stdout || error.stderr || error.message;
       const failedMatches = errorOutput.match(/(\d+) failed/);
       const passedMatches = errorOutput.match(/(\d+) passed/);
       
@@ -98,9 +92,7 @@ async function runTests() {
 
       console.log(`❌ ${suite.name}: ${suiteFailed} tests failed, ${suitePassed} tests passed`);
     }
-  }
-
-  // Print summary
+  }
   console.log('\n' + '='.repeat(60));
   console.log('📊 INTEGRATION TEST SUMMARY');
   console.log('='.repeat(60));
@@ -114,9 +106,7 @@ async function runTests() {
   console.log(`   Total Tests: ${totalTests}`);
   console.log(`   Passed: ${passedTests}`);
   console.log(`   Failed: ${failedTests}`);
-  console.log(`   Success Rate: ${totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0}%`);
-
-  // Print failed test details
+  console.log(`   Success Rate: ${totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0}%`);
   const failedSuites = results.filter(r => r.status === 'FAILED');
   if (failedSuites.length > 0) {
     console.log('\n🔍 FAILURE DETAILS:');
@@ -126,9 +116,7 @@ async function runTests() {
       console.log(`\n❌ ${suite.name}:`);
       console.log(suite.error);
     });
-  }
-
-  // Exit with appropriate code
+  }
   if (failedTests > 0) {
     console.log('\n💥 Some integration tests failed!');
     process.exit(1);
@@ -136,9 +124,7 @@ async function runTests() {
     console.log('\n🎉 All integration tests passed!');
     process.exit(0);
   }
-}
-
-// Handle script execution
+}
 if (require.main === module) {
   runTests().catch(error => {
     console.error('❌ Error running integration tests:', error);

@@ -20,42 +20,32 @@ export class ErrorBoundary extends Component<Props, State> {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI
+  static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error details for debugging
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
     
     this.setState({
       error,
       errorInfo
-    });
-
-    // You could also log the error to an error reporting service here
-    // Example: logErrorToService(error, errorInfo);
+    });
   }
 
-  private handleRetry = () => {
-    // Reset error state to retry rendering
+  private handleRetry = () => {
     this.setState({ hasError: false, error: undefined, errorInfo: undefined });
   };
 
-  private handleReload = () => {
-    // Reload the entire page as a last resort
+  private handleReload = () => {
     window.location.reload();
   };
 
   render() {
-    if (this.state.hasError) {
-      // Custom fallback UI
+    if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
-      }
-
-      // Default error UI
+      }
       return (
         <div className="error-boundary-container p-6 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-center mb-4">

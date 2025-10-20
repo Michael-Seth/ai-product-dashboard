@@ -48,17 +48,12 @@ describe('ProductDetailComponent', () => {
     expect(fixture.nativeElement.textContent).toContain(mockProduct.price.toString());
   });
 
-  it('should update when selected product changes', () => {
-    // Start with no product
+  it('should update when selected product changes', () => {
     fixture.detectChanges();
-    expect(component.selectedProduct).toBeNull();
-    
-    // Select a product
+    expect(component.selectedProduct).toBeNull();
     productService.selectProduct(mockProduct);
     fixture.detectChanges();
-    expect(component.selectedProduct).toEqual(mockProduct);
-    
-    // Clear selection
+    expect(component.selectedProduct).toEqual(mockProduct);
     productService.selectProduct(null);
     fixture.detectChanges();
     expect(component.selectedProduct).toBeNull();
@@ -89,8 +84,7 @@ describe('ProductDetailComponent', () => {
     expect(fixture.nativeElement.textContent).toContain(`#${mockProduct.id}`);
   });
 
-  it('should unsubscribe on destroy', () => {
-    // Test that the component can be destroyed without errors
+  it('should unsubscribe on destroy', () => {
     expect(() => component.ngOnDestroy()).not.toThrow();
   });
 
@@ -151,15 +145,11 @@ describe('ProductDetailComponent', () => {
       description: 'Another test laptop',
       price: 1299,
       imageUrl: 'https://example.com/image2.jpg'
-    };
-
-    // Select first product
+    };
     productService.selectProduct(product1);
     fixture.detectChanges();
     expect(component.selectedProduct).toEqual(product1);
-    expect(fixture.nativeElement.textContent).toContain(product1.name);
-
-    // Select second product
+    expect(fixture.nativeElement.textContent).toContain(product1.name);
     productService.selectProduct(product2);
     fixture.detectChanges();
     expect(component.selectedProduct).toEqual(product2);
