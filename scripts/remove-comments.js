@@ -11,14 +11,13 @@
  * 
  * Options:
  *   --dry-run    Show what would be changed without modifying files
- *   --preserve   Preserve JSDoc comments (/** ... *
- /*   --verbose    Show detailed output
+ *   --preserve   Preserve JSDoc comments (/** ... 
+ *   --verbose    Show detailed output
  *   --help       Show this help message
  */
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 class CommentRemover {
   constructor(options = {}) {
@@ -34,8 +33,10 @@ class CommentRemover {
       filesModified: 0,
       commentsRemoved: 0,
       linesRemoved: 0
-    };
-    this.extensions = ['.ts', '.js', '.html', '.css', '.scss', '.jsx', '.tsx'];
+    };
+
+    this.extensions = ['.ts', '.js', '.html', '.css', '.scss', '.jsx', '.tsx'];
+
     this.excludeDirs = [
       'node_modules',
       'dist',
@@ -45,7 +46,8 @@ class CommentRemover {
       '.angular',
       'tmp',
       'build'
-    ];
+    ];
+
     this.excludeFiles = [
       'package.json',
       'package-lock.json',
@@ -86,7 +88,8 @@ class CommentRemover {
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
       
-      if (entry.isDirectory()) {
+      if (entry.isDirectory()) {
+
         if (this.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
             console.log(`⏭️  Skipping directory: ${fullPath}`);
@@ -106,10 +109,12 @@ class CommentRemover {
    */
   async processFile(filePath) {
     const fileName = path.basename(filePath);
-    const fileExt = path.extname(filePath);
+    const fileExt = path.extname(filePath);
+
     if (this.excludeFiles.includes(fileName)) {
       return;
-    }
+    }
+
     if (!this.extensions.includes(fileExt)) {
       return;
     }
@@ -129,7 +134,8 @@ class CommentRemover {
         
         if (!this.options.dryRun) {
           fs.writeFileSync(filePath, processedContent, 'utf8');
-        }
+        }
+
         const originalLines = originalContent.split('\n').length;
         const processedLines = processedContent.split('\n').length;
         this.stats.linesRemoved += (originalLines - processedLines);
@@ -164,8 +170,11 @@ class CommentRemover {
    */
   removeJSComments(content) {
     let result = content;
-    let commentsRemoved = 0;
-    result = result.replace(/^(\s*)\/\/(?!\s*@|\s*eslint|\s*prettier|\s*webpack|\s*vite).*$/gm, (match, indent) => {
+    let commentsRemoved = 0;
+
+
+    result = result.replace(/^(\s*)\/\/(?!\s*@|\s*eslint|\s*prettier|\s*webpack|\s*vite).*$/gm, (match, indent) => {
+
       if (this.isInsideString(content, content.indexOf(match))) {
         return match;
       }
@@ -264,19 +273,19 @@ class CommentRemover {
   printSummary() {
     console.log('\n📊 Comment Removal Summary:');
     console.log('═'.repeat(40));
-    console.log(` Files processed: ${this.stats.filesProcessed}`);
-    console.log(`  Files modified: ${this.stats.filesModified}`);
-    console.log(` Comments removed: ${this.stats.commentsRemoved}`);
-    console.log(` Lines removed: ${this.stats.linesRemoved}`);
+    console.log(`📁 Files processed: ${this.stats.filesProcessed}`);
+    console.log(`✏️  Files modified: ${this.stats.filesModified}`);
+    console.log(`💬 Comments removed: ${this.stats.commentsRemoved}`);
+    console.log(`📄 Lines removed: ${this.stats.linesRemoved}`);
     
     if (this.options.dryRun) {
-      console.log('\n This was a dry run - no files were actually modified');
+      console.log('\n🔍 This was a dry run - no files were actually modified');
       console.log('   Run without --dry-run to apply changes');
     } else {
-      console.log('\n Comment removal completed successfully!');
+      console.log('\n✅ Comment removal completed successfully!');
     }
     
-    console.log('\n Tip: Run your linter/formatter after comment removal to clean up formatting');
+    console.log('\n💡 Tip: Run your linter/formatter after comment removal to clean up formatting');
   }
 
   /**
@@ -313,27 +322,27 @@ Examples:
   node scripts/remove-comments.js --dry-run --verbose
 
 Files processed:
-   TypeScript (.ts, .tsx)
-   JavaScript (.js, .jsx)  
-   HTML (.html)
-   CSS (.css)
-   SCSS (.scss)
+  ✅ TypeScript (.ts, .tsx)
+  ✅ JavaScript (.js, .jsx)  
+  ✅ HTML (.html)
+  ✅ CSS (.css)
+  ✅ SCSS (.scss)
 
 Preserved comments:
-   License headers
-   Copyright notices
-   JSDoc comments (if --preserve is used)
-   Angular-specific HTML comments
-   Conditional comments
+  ✅ License headers
+  ✅ Copyright notices
+  ✅ JSDoc comments (if --preserve is used)
+  ✅ Angular-specific HTML comments
+  ✅ Conditional comments
 
 Excluded directories:
-   node_modules, dist, coverage, .git, .nx, .angular, tmp, build
+  ❌ node_modules, dist, coverage, .git, .nx, .angular, tmp, build
 
 Safety features:
-   Dry run mode to preview changes
-   Preserves important legal and documentation comments
-   Skips binary and configuration files
-   Detailed logging and statistics
+  🔒 Dry run mode to preview changes
+  🔒 Preserves important legal and documentation comments
+  🔒 Skips binary and configuration files
+  🔒 Detailed logging and statistics
 `);
   }
 }

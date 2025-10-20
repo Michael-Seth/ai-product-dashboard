@@ -8,7 +8,8 @@ interface RecommenderProps {
 
 export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
   const [retryCount, setRetryCount] = useState(0);
-  const [lastError, setLastError] = useState<string | null>(null);
+  const [lastError, setLastError] = useState<string | null>(null);
+
   const {
     data,
     error,
@@ -17,10 +18,12 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     refetch,
     isFetching,
   } = useGetRecommendationsQuery(product?.name || '', {
-    skip: !product,
+    skip: !product,
+
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true,
-  });
+  });
+
   const handleRetry = useCallback(async () => {
     if (retryCount < 3) { // Limit retries to prevent infinite loops
       setRetryCount(prev => prev + 1);
@@ -34,11 +37,13 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     } else {
       setLastError('Maximum retry attempts reached. Please refresh the page.');
     }
-  }, [refetch, retryCount]);
+  }, [refetch, retryCount]);
+
   useEffect(() => {
     setRetryCount(0);
     setLastError(null);
-  }, [product?.name]);
+  }, [product?.name]);
+
   if (isLoading || isFetching) {
     return (
       <div className="loading-container empty-state">
@@ -49,8 +54,8 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
         </p>
         <div className="mt-4 flex justify-center space-x-1">
           <div className="w-2 h-2 bg-brand rounded-full animate-bounce"></div>
-          <div className="w-2 h-2 bg-brand rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-          <div className="w-2 h-2 bg-brand rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+          <div className="w-2 h-2 bg-brand rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+          <div className="w-2 h-2 bg-brand rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
         </div>
         {retryCount > 0 && (
           <div className="mt-2 text-xs text-gray-500">
@@ -59,11 +64,12 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
         )}
       </div>
     );
-  }
+  }
+
   if (isError) {
-    const errorMessage = typeof error === 'string' 
-      ? error 
-      : lastError 
+    const errorMessage = typeof error === 'string'
+      ? error
+      : lastError
       || 'Unable to load recommendations at this time. Our AI service might be temporarily unavailable.';
 
     const isNetworkError = errorMessage.includes('Network') || errorMessage.includes('connection');
@@ -73,7 +79,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     let errorIcon;
     let errorTitle;
     let errorDescription;
-    let canRetry = retryCount < 3;
+    const canRetry = retryCount < 3;
 
     if (isNetworkError) {
       errorIcon = (
@@ -118,7 +124,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
         <p className="empty-state-description text-center max-w-sm mx-auto">
           {errorDescription}
         </p>
-        
+
         {retryCount > 0 && (
           <div className="mt-2 text-xs text-gray-500">
             Retry attempts: {retryCount}/3
@@ -127,7 +133,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
 
         <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
           {canRetry && (
-            <button 
+            <button
               onClick={handleRetry}
               disabled={isFetching}
               className="px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-dark transition-colors duration-200 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
@@ -135,7 +141,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
               {isFetching ? 'Retrying...' : 'Try Again'}
             </button>
           )}
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 text-sm font-medium"
           >
@@ -187,7 +193,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
         <p className="empty-state-description">
           Our AI couldn't find suitable recommendations for this product at the moment. Try selecting a different product.
         </p>
-        <button 
+        <button
           onClick={handleRetry}
           className="mt-3 px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors duration-200"
         >
@@ -222,7 +228,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
           <div
             key={`${recommendation.name}-${index}`}
             className="recommendation-card group fade-in"
-            style={{animationDelay: `${index * 0.1}s`}}
+            style={{ animationDelay: `${index * 0.1}s` }}
           >
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center group-hover:bg-brand/20 transition-colors duration-200">

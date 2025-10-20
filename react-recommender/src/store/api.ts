@@ -53,14 +53,10 @@ export const recommendationApi = createApi({
           throw new Error(response.message || response.error);
         }
 
-        const typedResponse = response as RecommendationResponse;
-        
-        // Validate recommendations array
+        const typedResponse = response as RecommendationResponse;
         if (!typedResponse.recommendations || !Array.isArray(typedResponse.recommendations)) {
           throw new Error('Invalid recommendations format');
-        }
-
-        // Validate each recommendation
+        }
         const validRecommendations = typedResponse.recommendations.filter(rec => 
           rec && 
           typeof rec === 'object' && 
@@ -79,9 +75,7 @@ export const recommendationApi = createApi({
         };
       },
       transformErrorResponse: (response: FetchBaseQueryError): string => {
-        console.error('API Error:', response);
-
-        // Handle different types of errors
+        console.error('API Error:', response);
         if (response.status === 'FETCH_ERROR') {
           return 'Network connection failed. Please check your internet connection and try again.';
         }
@@ -115,16 +109,11 @@ export const recommendationApi = createApi({
             default:
               return `Unexpected error (${response.status}). Please try again.`;
           }
-        }
-
-        // Fallback error message
+        }
         return 'An unexpected error occurred. Please try again.';
-      },
-      // Cache recommendations for 5 minutes
+      },
       keepUnusedDataFor: 300,
     }),
   }),
-});
-
-// Export hooks for usage in components
+});
 export const { useGetRecommendationsQuery } = recommendationApi;

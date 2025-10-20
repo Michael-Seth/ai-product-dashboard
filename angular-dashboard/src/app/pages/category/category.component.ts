@@ -280,6 +280,5 @@ export class CategoryComponent implements OnInit, OnDestroy {
   addToCart(product: Product, event: Event): void {
     event.stopPropagation();
     this.cartService.addToCart(product);
-    console.log('Added to cart:', product.name);
   }
 }

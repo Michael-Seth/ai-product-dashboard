@@ -20,8 +20,6 @@ function log(message, type = 'info') {
     error: '❌',
     build: '🔨'
   }[type] || '📋';
-  
-  console.log(`${prefix} [${timestamp}] ${message}`);
 }
 
 function runCommand(command, description) {
@@ -40,13 +38,9 @@ function checkEnvironment() {
   if (!fs.existsSync('package.json')) {
     log('package.json not found. Please run from project root.', 'error');
     process.exit(1);
-  }
-  
-  // Check Node.js version
+  }
   const nodeVersion = process.version;
-  log(`Node.js version: ${nodeVersion}`, 'info');
-  
-  // Check if dependencies are installed
+  log(`Node.js version: ${nodeVersion}`, 'info');
   if (!fs.existsSync('node_modules')) {
     log('node_modules not found. Installing dependencies...', 'warning');
     runCommand('npm install', 'Installing dependencies');
@@ -78,17 +72,11 @@ function runTests() {
 }
 
 function buildApplications() {
-  log('Building applications for production...', 'build');
-  
-  // Build shared libraries first
+  log('Building applications for production...', 'build');
   runCommand('npx nx build shared-types', 'Building shared types');
-  runCommand('npx nx build shared-api', 'Building shared API');
-  
-  // Build applications
+  runCommand('npx nx build shared-api', 'Building shared API');
   runCommand('npx nx build angular-dashboard --configuration=production', 'Building Angular dashboard');
-  runCommand('npx nx build react-recommender --configuration=production', 'Building React recommender');
-  
-  // Build web component separately
+  runCommand('npx nx build react-recommender --configuration=production', 'Building React recommender');
   runCommand('npx nx build-web-component react-recommender --configuration=production', 'Building React web component');
   
   log('All builds completed successfully', 'success');
@@ -134,9 +122,7 @@ function generateDeploymentReport() {
     nodeVersion: process.version,
     buildOutputs: [],
     recommendations: []
-  };
-  
-  // Check each build output
+  };
   const outputs = [
     { name: 'Angular Dashboard', path: 'dist/angular-dashboard' },
     { name: 'React Recommender', path: 'dist/react-recommender' },
@@ -153,9 +139,7 @@ function generateDeploymentReport() {
         size: getDirSize(output.path)
       });
     }
-  });
-  
-  // Add recommendations
+  });
   report.recommendations = [
     'Enable gzip/brotli compression on your server',
     'Configure proper cache headers for static assets',
@@ -191,9 +175,6 @@ function getDirSize(dirPath) {
 }
 
 function main() {
-  console.log('AI Product Dashboard - Production Deployment');
-  console.log('===============================================');
-  
   const startTime = Date.now();
   
   try {
@@ -209,13 +190,6 @@ function main() {
     
     log(`Deployment preparation completed in ${duration}s`, 'success');
     log('Ready for deployment to Vercel or other platforms', 'success');
-    
-    console.log('\n📋 Next Steps:');
-    console.log('  1. Review the deployment report (deployment-report.json)');
-    console.log('  2. Deploy to Vercel: vercel --prod');
-    console.log('  3. Monitor application performance');
-    console.log('  4. Set up monitoring and alerts');
-    
   } catch (error) {
     log(`Deployment preparation failed: ${error.message}`, 'error');
     process.exit(1);

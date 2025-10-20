@@ -63,7 +63,7 @@ class AdvancedCommentRemover {
         return require(configPath);
       }
     } catch (error) {
-      console.warn(`⚠️  Could not load config file: ${error.message}`);
+      console.warn(`️ Could not load config file: ${error.message}`);
     }
 
     return require('./remove-comments.config.js');
@@ -73,10 +73,10 @@ class AdvancedCommentRemover {
    * Main entry point
    */
   async removeComments(paths = ['.']) {
-    console.log('🧹 Starting advanced comment removal process...\n');
+    console.log(' Starting advanced comment removal process...\n');
     
     if (this.options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No files will be modified\n');
+      console.log(' DRY RUN MODE - No files will be modified\n');
     }
     
     try {
@@ -85,7 +85,7 @@ class AdvancedCommentRemover {
       }
       this.printSummary();
     } catch (error) {
-      console.error('❌ Error during comment removal:', error.message);
+      console.error(' Error during comment removal:', error.message);
       process.exit(1);
     }
   }
@@ -120,7 +120,9 @@ class AdvancedCommentRemover {
    * Process directory with glob patterns
    */
   async processDirectoryWithGlob(dirPath) {
-    const pattern = this.options.pattern || `**${dir}/**`),
+    const fullPattern = this.options.pattern || `${dirPath}/**/*`;
+    const ignore = [
+      ...this.config.excludeDirs.map(dir => `**/${dir}/**`),
       ...this.config.excludeFiles.map(file => `**/${file}`)
     ];
     
@@ -139,7 +141,7 @@ class AdvancedCommentRemover {
         await this.processFile(file);
       }
     } catch (error) {
-      console.error(`❌ Error processing directory ${dirPath}:`, error.message);
+      console.error(` Error processing directory ${dirPath}:`, error.message);
     }
   }
 
@@ -156,7 +158,7 @@ class AdvancedCommentRemover {
 
         if (this.config.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
-            console.log(`⏭️  Skipping directory: ${fullPath}`);
+            console.log(`⏭️ Skipping directory: ${fullPath}`);
           }
           continue;
         }
@@ -207,7 +209,7 @@ class AdvancedCommentRemover {
         this.stats.byFileType[fileExt].modified++;
         
         if (this.options.verbose) {
-          console.log(`📝 Processing: ${filePath}`);
+          console.log(` Processing: ${filePath}`);
         }
         
         if (!this.options.dryRun) {
@@ -224,7 +226,7 @@ class AdvancedCommentRemover {
         this.stats.linesRemoved += (originalLines - processedLines);
       }
     } catch (error) {
-      console.error(`❌ Error processing ${filePath}:`, error.message);
+      console.error(` Error processing ${filePath}:`, error.message);
     }
   }
 
@@ -425,32 +427,32 @@ class AdvancedCommentRemover {
    * Print detailed summary
    */
   printSummary() {
-    console.log('\n📊 Advanced Comment Removal Summary:');
+    console.log('\n Advanced Comment Removal Summary:');
     console.log('═'.repeat(50));
-    console.log(`📁 Files processed: ${this.stats.filesProcessed}`);
-    console.log(`✏️  Files modified: ${this.stats.filesModified}`);
-    console.log(`💬 Comments removed: ${this.stats.commentsRemoved}`);
-    console.log(`📄 Lines removed: ${this.stats.linesRemoved}`);
+    console.log(` Files processed: ${this.stats.filesProcessed}`);
+    console.log(`️ Files modified: ${this.stats.filesModified}`);
+    console.log(` Comments removed: ${this.stats.commentsRemoved}`);
+    console.log(` Lines removed: ${this.stats.linesRemoved}`);
     
     // Show breakdown by file type
-    console.log('\n📋 Breakdown by file type:');
+    console.log('\n Breakdown by file type:');
     for (const [ext, stats] of Object.entries(this.stats.byFileType)) {
       if (stats.processed > 0) {
-        console.log(`  ${ext}: ${stats.processed} processed, ${stats.modified} modified, ${stats.commentsRemoved} comments removed`);
+        console.log(` ${ext}: ${stats.processed} processed, ${stats.modified} modified, ${stats.commentsRemoved} comments removed`);
       }
     }
     
     if (this.options.dryRun) {
-      console.log('\n🔍 This was a dry run - no files were actually modified');
-      console.log('   Run without --dry-run to apply changes');
+      console.log('\n This was a dry run - no files were actually modified');
+      console.log(' Run without --dry-run to apply changes');
     } else {
-      console.log('\n✅ Advanced comment removal completed successfully!');
+      console.log('\n Advanced comment removal completed successfully!');
     }
     
-    console.log('\n💡 Recommendations:');
-    console.log('   • Run your linter/formatter after comment removal');
-    console.log('   • Review changes before committing');
-    console.log('   • Consider running tests to ensure functionality');
+    console.log('\n Recommendations:');
+    console.log(' • Run your linter/formatter after comment removal');
+    console.log(' • Review changes before committing');
+    console.log(' • Consider running tests to ensure functionality');
   }
 
   /**
@@ -458,7 +460,7 @@ class AdvancedCommentRemover {
    */
   static showHelp() {
     console.log(`
-🧹 Advanced Comment Removal Script for AI E-commerce Platform
+🚀 Advanced Comment Removal Script for AI E-commerce Platform
 
 Enhanced version with configuration support and granular control.
 
@@ -466,12 +468,12 @@ Usage:
   node scripts/remove-comments-advanced.js [options] [paths...]
 
 Options:
-  --config <path>   Use custom configuration file (default: ./scripts/remove-comments.config.js)
-  --dry-run         Show what would be changed without modifying files
-  --verbose         Show detailed output for each file processed
-  --pattern <glob>  Process only files matching glob pattern
-  --exclude <glob>  Exclude files matching glob pattern
-  --help            Show this help message
+  --config <path>  Use custom configuration file (default: ./scripts/remove-comments.config.js)
+  --dry-run        Show what would be changed without modifying files
+  --verbose        Show detailed output for each file processed
+  --pattern <glob> Process only files matching glob pattern
+  --exclude <glob> Exclude files matching glob pattern
+  --help           Show this help message
 
 Examples:
   # Process entire codebase with default config
@@ -497,63 +499,9 @@ Configuration:
   • Output options
 
 Safety Features:
-  🔒 Dry run mode to preview changes
-  🔒 Configurable preserve patterns
-  🔒 File type specific handling
-  🔒 Detailed statistics and logging
-  🔒 Backup creation (if configured)
-`);
-  }
-}
-
-// CLI Interface
-async function main() {
-  const args = process.argv.slice(2);
-  
-  // Parse command line arguments
-  const options = {
-    dryRun: args.includes('--dry-run'),
-    verbose: args.includes('--verbose'),
-    help: args.includes('--help') || args.includes('-h')
-  };
-  
-  // Parse config option
-  const configIndex = args.indexOf('--config');
-  if (configIndex !== -1 && args[configIndex + 1]) {
-    options.configPath = args[configIndex + 1];
-  }
-  
-  // Parse pattern option
-  const patternIndex = args.indexOf('--pattern');
-  if (patternIndex !== -1 && args[patternIndex + 1]) {
-    options.pattern = args[patternIndex + 1];
-  }
-  
-  // Parse exclude option
-  const excludeIndex = args.indexOf('--exclude');
-  if (excludeIndex !== -1 && args[excludeIndex + 1]) {
-    options.exclude = args[excludeIndex + 1];
-  }
-  
-  if (options.help) {
-    AdvancedCommentRemover.showHelp();
-    return;
-  }
-  
-  // Get paths to process
-  const paths = args.filter(arg => 
-    !arg.startsWith('--') && 
-    !args[args.indexOf(arg) - 1]?.startsWith('--')
-  );
-  
-  const remover = new AdvancedCommentRemover(options);
-  await remover.removeComments(paths.length > 0 ? paths : ['.']);
-}
-
-// Export for testing
-module.exports = AdvancedCommentRemover;
-
-// Run if called directly
-if (require.main === module) {
-  main().catch(console.error);
-}
+  ✓ Dry run mode to preview changes
+  ✓ Configurable preserve patterns
+  ✓ File type specific handling
+  ✓ Detailed statistics and logging
+  ✓ Backup creation (if configured)
+    `); } } 

@@ -7,10 +7,6 @@
 
 const { execSync } = require('child_process');
 const path = require('path');
-
-console.log('🚀 Starting Integration Tests for AI Product Dashboard');
-console.log('=' .repeat(60));
-
 const testSuites = [
   {
     name: 'Cross-Framework Communication',
@@ -36,10 +32,6 @@ async function runTests() {
   const results = [];
 
   for (const suite of testSuites) {
-    console.log(`\n📋 Running: ${suite.name}`);
-    console.log(`   ${suite.description}`);
-    console.log('-'.repeat(50));
-
     try {
       const startTime = Date.now();
       const output = execSync(
@@ -66,9 +58,6 @@ async function runTests() {
         duration: duration,
         output: output
       });
-
-      console.log(`✅ ${suite.name}: ${suitePassedTests} tests passed (${duration}ms)`);
-
     } catch (error) {
       const errorOutput = error.stdout || error.stderr || error.message;
       const failedMatches = errorOutput.match(/(\d+) failed/);
@@ -89,45 +78,25 @@ async function runTests() {
         failed: suiteFailed,
         error: errorOutput
       });
-
-      console.log(`❌ ${suite.name}: ${suiteFailed} tests failed, ${suitePassed} tests passed`);
     }
-  }
-  console.log('\n' + '='.repeat(60));
-  console.log('📊 INTEGRATION TEST SUMMARY');
-  console.log('='.repeat(60));
-
+  }
   results.forEach(result => {
     const status = result.status === 'PASSED' ? '✅' : '❌';
-    console.log(`${status} ${result.name}: ${result.tests} tests (${result.duration || 'N/A'}ms)`);
   });
-
-  console.log('\n📈 OVERALL RESULTS:');
-  console.log(`   Total Tests: ${totalTests}`);
-  console.log(`   Passed: ${passedTests}`);
-  console.log(`   Failed: ${failedTests}`);
-  console.log(`   Success Rate: ${totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0}%`);
   const failedSuites = results.filter(r => r.status === 'FAILED');
   if (failedSuites.length > 0) {
-    console.log('\n🔍 FAILURE DETAILS:');
-    console.log('-'.repeat(50));
-    
     failedSuites.forEach(suite => {
-      console.log(`\n❌ ${suite.name}:`);
-      console.log(suite.error);
     });
   }
   if (failedTests > 0) {
-    console.log('\n💥 Some integration tests failed!');
     process.exit(1);
   } else {
-    console.log('\n🎉 All integration tests passed!');
     process.exit(0);
   }
 }
 if (require.main === module) {
   runTests().catch(error => {
-    console.error('❌ Error running integration tests:', error);
+    console.error(' Error running integration tests:', error);
     process.exit(1);
   });
 }

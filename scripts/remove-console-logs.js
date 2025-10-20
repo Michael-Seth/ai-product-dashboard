@@ -2,13 +2,13 @@
 
 /**
  * Console.log Removal Script for AI E-commerce Platform
- * 
+ *
  * This script removes console.log, console.warn, console.error, and other console statements
  * from TypeScript and JavaScript files while preserving important logging in production code.
- * 
+ *
  * Usage:
  *   node scripts/remove-console-logs.js [options]
- * 
+ *
  * Options:
  *   --dry-run      Show what would be changed without modifying files
  *   --preserve     Preserve console.error and console.warn statements
@@ -27,9 +27,9 @@ class ConsoleLogRemover {
       preserveErrors: options.preserve !== false, // Default to true
       removeAll: options.all || false,
       verbose: options.verbose || false,
-      ...options
+      ...options,
     };
-    
+
     this.stats = {
       filesProcessed: 0,
       filesModified: 0,
@@ -44,10 +44,12 @@ class ConsoleLogRemover {
         'console.trace': 0,
         'console.table': 0,
         'console.group': 0,
-        'console.time': 0
-      }
-    };
-    this.extensions = ['.ts', '.js', '.tsx', '.jsx'];
+        'console.time': 0,
+      },
+    };
+
+    this.extensions = ['.ts', '.js', '.tsx', '.jsx'];
+
     this.excludeDirs = [
       'node_modules',
       'dist',
@@ -56,43 +58,83 @@ class ConsoleLogRemover {
       '.nx',
       '.angular',
       'tmp',
-      'build'
-    ];
+      'build',
+    ];
+
     this.excludeFiles = [
       'package.json',
       'package-lock.json',
       'tsconfig.json',
       'angular.json',
-      'nx.json'
-    ];
-    this.consoleMethods = this.options.removeAll 
-      ? ['log', 'debug', 'info', 'warn', 'error', 'trace', 'table', 'group', 'groupEnd', 'time', 'timeEnd']
-      : this.options.preserveErrors 
-        ? ['log', 'debug', 'info', 'trace', 'table', 'group', 'groupEnd', 'time', 'timeEnd']
-        : ['log', 'debug', 'info', 'warn', 'error', 'trace', 'table', 'group', 'groupEnd', 'time', 'timeEnd'];
+      'nx.json',
+    ];
+
+    this.consoleMethods = this.options.removeAll
+      ? [
+          'log',
+          'debug',
+          'info',
+          'warn',
+          'error',
+          'trace',
+          'table',
+          'group',
+          'groupEnd',
+          'time',
+          'timeEnd',
+        ]
+      : this.options.preserveErrors
+      ? [
+          'log',
+          'debug',
+          'info',
+          'trace',
+          'table',
+          'group',
+          'groupEnd',
+          'time',
+          'timeEnd',
+        ]
+      : [
+          'log',
+          'debug',
+          'info',
+          'warn',
+          'error',
+          'trace',
+          'table',
+          'group',
+          'groupEnd',
+          'time',
+          'timeEnd',
+        ];
   }
 
   /**
    * Main entry point - removes console statements from the entire codebase
    */
   async removeConsoleLogsFromCodebase(rootDir = '.') {
-    console.log('🧹 Starting console.log removal process...\n');
-    
+    console.log(' Starting console.log removal process...\n');
+
     if (this.options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No files will be modified\n');
+      console.log(' DRY RUN MODE - No files will be modified\n');
     }
 
     if (this.options.removeAll) {
-      console.log('⚠️  REMOVE ALL MODE - All console statements will be removed\n');
+      console.log(
+        '️ REMOVE ALL MODE - All console statements will be removed\n'
+      );
     } else if (this.options.preserveErrors) {
-      console.log('🛡️  PRESERVE MODE - console.error and console.warn will be preserved\n');
+      console.log(
+        '️ PRESERVE MODE - console.error and console.warn will be preserved\n'
+      );
     }
-    
+
     try {
       await this.processDirectory(rootDir);
       this.printSummary();
     } catch (error) {
-      console.error('❌ Error during console.log removal:', error.message);
+      console.error(' Error during console.log removal:', error.message);
       process.exit(1);
     }
   }
@@ -102,18 +144,18 @@ class ConsoleLogRemover {
    */
   async processDirectory(dirPath) {
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
-      
-      if (entry.isDirectory()) {
+
+      if (entry.isDirectory()) {
         if (this.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
-            console.log(`⏭️  Skipping directory: ${fullPath}`);
+            console.log(`⏭️ Skipping directory: ${fullPath}`);
           }
           continue;
         }
-        
+
         await this.processDirectory(fullPath);
       } else if (entry.isFile()) {
         await this.processFile(fullPath);
@@ -126,36 +168,39 @@ class ConsoleLogRemover {
    */
   async processFile(filePath) {
     const fileName = path.basename(filePath);
-    const fileExt = path.extname(filePath);
+    const fileExt = path.extname(filePath);
+
     if (this.excludeFiles.includes(fileName)) {
       return;
-    }
+    }
+
     if (!this.extensions.includes(fileExt)) {
       return;
     }
-    
+
     this.stats.filesProcessed++;
-    
+
     try {
       const originalContent = fs.readFileSync(filePath, 'utf8');
       const processedContent = this.removeConsoleStatements(originalContent);
-      
+
       if (originalContent !== processedContent) {
         this.stats.filesModified++;
-        
+
         if (this.options.verbose) {
-          console.log(`📝 Processing: ${filePath}`);
+          console.log(` Processing: ${filePath}`);
         }
-        
+
         if (!this.options.dryRun) {
           fs.writeFileSync(filePath, processedContent, 'utf8');
-        }
+        }
+
         const originalLines = originalContent.split('\n').length;
         const processedLines = processedContent.split('\n').length;
-        this.stats.linesRemoved += (originalLines - processedLines);
+        this.stats.linesRemoved += originalLines - processedLines;
       }
     } catch (error) {
-      console.error(`❌ Error processing ${filePath}:`, error.message);
+      console.error(` Error processing ${filePath}:`, error.message);
     }
   }
 
@@ -164,39 +209,47 @@ class ConsoleLogRemover {
    */
   removeConsoleStatements(content) {
     let result = content;
-    let totalRemoved = 0;
-    const methodsPattern = this.consoleMethods.join('|');
+    let totalRemoved = 0;
+
+    const methodsPattern = this.consoleMethods.join('|');
+
     const consoleRegex = new RegExp(
       `^(\\s*)console\\.(${methodsPattern})\\s*\\([^;]*?\\);?\\s*$`,
       'gm'
-    );
+    );
+
     const complexConsoleRegex = new RegExp(
       `^(\\s*)console\\.(${methodsPattern})\\s*\\((?:[^)(]|\\([^)]*\\))*\\);?\\s*$`,
       'gm'
-    );
+    );
+
     const multiLineConsoleRegex = new RegExp(
       `^(\\s*)console\\.(${methodsPattern})\\s*\\([\\s\\S]*?\\);?\\s*$`,
       'gm'
-    );
+    );
+
     result = result.replace(consoleRegex, (match, indent, method) => {
       if (this.shouldPreserveConsoleStatement(match, method)) {
         return match;
       }
-      
+
       this.stats.byType[`console.${method}`]++;
       totalRemoved++;
       return '';
-    });
+    });
+
     result = result.replace(complexConsoleRegex, (match, indent, method) => {
       if (this.shouldPreserveConsoleStatement(match, method)) {
         return match;
       }
-      
+
       this.stats.byType[`console.${method}`]++;
       totalRemoved++;
       return '';
-    });
-    result = this.removeMultiLineConsoleStatements(result, totalRemoved);
+    });
+
+    result = this.removeMultiLineConsoleStatements(result, totalRemoved);
+
     result = result.replace(/\n\s*\n\s*\n/g, '\n\n');
 
     this.stats.consoleStatementsRemoved += totalRemoved;
@@ -214,17 +267,21 @@ class ConsoleLogRemover {
 
     while (i < lines.length) {
       const line = lines[i];
-      const trimmedLine = line.trim();
-      const consoleMatch = trimmedLine.match(new RegExp(`^console\\.(${this.consoleMethods.join('|')})\\s*\\(`));
-      
+      const trimmedLine = line.trim();
+
+      const consoleMatch = trimmedLine.match(
+        new RegExp(`^console\\.(${this.consoleMethods.join('|')})\\s*\\(`)
+      );
+
       if (consoleMatch) {
         const method = consoleMatch[1];
-        
+
         if (this.shouldPreserveConsoleStatement(line, method)) {
           result.push(line);
           i++;
           continue;
-        }
+        }
+
         let openParens = 0;
         let inString = false;
         let stringChar = '';
@@ -233,10 +290,10 @@ class ConsoleLogRemover {
 
         for (j = i; j < lines.length; j++) {
           const currentLine = lines[j];
-          
+
           for (let k = 0; k < currentLine.length; k++) {
             const char = currentLine[k];
-            
+
             if (!inString) {
               if (char === '"' || char === "'" || char === '`') {
                 inString = true;
@@ -257,7 +314,7 @@ class ConsoleLogRemover {
               }
             }
           }
-          
+
           if (foundEnd) break;
         }
 
@@ -285,48 +342,73 @@ class ConsoleLogRemover {
    */
   shouldPreserveConsoleStatement(statement, method) {
     // Always preserve if inside comments
-    if (statement.includes('//') || statement.includes('
+    if (statement.includes('//') || statement.includes('/*')) {
+      return true;
+    }
+
+    // Always preserve if inside string literals
+    if (this.isInStringLiteral(statement)) {
+      return true;
+    }
+
+    // Check if method should be preserved based on options
+    if (!this.options.removeAll && this.options.preserveErrors) {
+      if (method === 'error' || method === 'warn') {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Check if console statement is inside a string literal
+   */
   isInStringLiteral(statement) {
     const consoleIndex = statement.indexOf('console.');
     const beforeConsole = statement.substring(0, consoleIndex);
-    
+
     // Count unescaped quotes before console statement
     const singleQuotes = (beforeConsole.match(/(?<!\\)'/g) || []).length;
     const doubleQuotes = (beforeConsole.match(/(?<!\\)"/g) || []).length;
     const backticks = (beforeConsole.match(/(?<!\\)`/g) || []).length;
-    
-    return (singleQuotes % 2 === 1) || (doubleQuotes % 2 === 1) || (backticks % 2 === 1);
+
+    return (
+      singleQuotes % 2 === 1 || doubleQuotes % 2 === 1 || backticks % 2 === 1
+    );
   }
 
   /**
    * Print summary of changes
    */
   printSummary() {
-    console.log('\n📊 Console.log Removal Summary:');
+    console.log('\n Console.log Removal Summary:');
     console.log('═'.repeat(45));
-    console.log(`📁 Files processed: ${this.stats.filesProcessed}`);
-    console.log(`✏️  Files modified: ${this.stats.filesModified}`);
-    console.log(`🖥️  Console statements removed: ${this.stats.consoleStatementsRemoved}`);
-    console.log(`📄 Lines removed: ${this.stats.linesRemoved}`);
-    
-    console.log('\n📋 Breakdown by console method:');
+    console.log(` Files processed: ${this.stats.filesProcessed}`);
+    console.log(`️ Files modified: ${this.stats.filesModified}`);
+    console.log(
+      `️ Console statements removed: ${this.stats.consoleStatementsRemoved}`
+    );
+    console.log(` Lines removed: ${this.stats.linesRemoved}`);
+
+    console.log('\n Breakdown by console method:');
     for (const [method, count] of Object.entries(this.stats.byType)) {
       if (count > 0) {
-        console.log(`  ${method}: ${count} removed`);
+        console.log(` ${method}: ${count} removed`);
       }
     }
-    
+
     if (this.options.dryRun) {
-      console.log('\n🔍 This was a dry run - no files were actually modified');
-      console.log('   Run without --dry-run to apply changes');
+      console.log('\n This was a dry run - no files were actually modified');
+      console.log(' Run without --dry-run to apply changes');
     } else {
-      console.log('\n✅ Console.log removal completed successfully!');
+      console.log('\n Console.log removal completed successfully!');
     }
-    
-    console.log('\n💡 Tips:');
-    console.log('   • Run your tests after removal to ensure functionality');
-    console.log('   • Consider using a proper logging library for production');
-    console.log('   • Use --preserve to keep console.error and console.warn');
+
+    console.log('\n Tips:');
+    console.log(' • Run your tests after removal to ensure functionality');
+    console.log(' • Consider using a proper logging library for production');
+    console.log(' • Use --preserve to keep console.error and console.warn');
   }
 
   /**
@@ -334,7 +416,7 @@ class ConsoleLogRemover {
    */
   static showHelp() {
     console.log(`
-🧹 Console.log Removal Script for AI E-commerce Platform
+🚀 Console.log Removal Script for AI E-commerce Platform
 
 This script removes console.log, console.debug, console.info, and other console statements
 from TypeScript and JavaScript files while optionally preserving error logging.
@@ -343,11 +425,11 @@ Usage:
   node scripts/remove-console-logs.js [options]
 
 Options:
-  --dry-run     Show what would be changed without modifying files
-  --preserve    Preserve console.error and console.warn statements [default: true]
-  --all         Remove ALL console statements including error/warn
-  --verbose     Show detailed output for each file processed
-  --help        Show this help message
+  --dry-run    Show what would be changed without modifying files
+  --preserve   Preserve console.error and console.warn statements [default: true]
+  --all        Remove ALL console statements including error/warn
+  --verbose    Show detailed output for each file processed
+  --help       Show this help message
 
 Examples:
   # Dry run to see what would be changed
@@ -363,56 +445,60 @@ Examples:
   node scripts/remove-console-logs.js --dry-run --verbose
 
 Console methods handled:
-  ✅ console.log()
-  ✅ console.debug()
-  ✅ console.info()
-  ✅ console.warn() (preserved by default)
-  ✅ console.error() (preserved by default)
-  ✅ console.trace()
-  ✅ console.table()
-  ✅ console.group() / console.groupEnd()
-  ✅ console.time() / console.timeEnd()
+  ✓ console.log()
+  ✓ console.debug()
+  ✓ console.info()
+  ✓ console.warn() (preserved by default)
+  ✓ console.error() (preserved by default)
+  ✓ console.trace()
+  ✓ console.table()
+  ✓ console.group() / console.groupEnd()
+  ✓ console.time() / console.timeEnd()
 
 Files processed:
-  ✅ TypeScript (.ts, .tsx)
-  ✅ JavaScript (.js, .jsx)
+  ✓ TypeScript (.ts, .tsx)
+  ✓ JavaScript (.js, .jsx)
 
 Preserved statements:
-  ✅ Console statements in comments
-  ✅ Console statements in string literals
-  ✅ console.error and console.warn (unless --all is used)
+  ✓ Console statements in comments
+  ✓ Console statements in string literals
+  ✓ console.error and console.warn (unless --all is used)
 
 Excluded directories:
-  ❌ node_modules, dist, coverage, .git, .nx, .angular, tmp, build
+  node_modules, dist, coverage, .git, .nx, .angular, tmp, build
 
 Safety features:
-  🔒 Dry run mode to preview changes
-  🔒 Preserves important error logging by default
-  🔒 Handles multi-line console statements
-  🔒 Skips console statements in strings and comments
-  🔒 Detailed logging and statistics
-`);
+  ✓ Dry run mode to preview changes
+  ✓ Preserves important error logging by default
+  ✓ Handles multi-line console statements
+  ✓ Skips console statements in strings and comments
+  ✓ Detailed logging and statistics
+    `);
   }
-}
+}
+
 function main() {
-  const args = process.argv.slice(2);
+  const args = process.argv.slice(2);
+
   const options = {
     dryRun: args.includes('--dry-run'),
     preserve: !args.includes('--all'), // Preserve errors unless --all is specified
     all: args.includes('--all'),
     verbose: args.includes('--verbose'),
-    help: args.includes('--help') || args.includes('-h')
+    help: args.includes('--help') || args.includes('-h'),
   };
-  
+
   if (options.help) {
     ConsoleLogRemover.showHelp();
     return;
   }
-  
+
   const remover = new ConsoleLogRemover(options);
   remover.removeConsoleLogsFromCodebase();
-}
-module.exports = ConsoleLogRemover;
+}
+
+module.exports = ConsoleLogRemover;
+
 if (require.main === module) {
   main();
 }

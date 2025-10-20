@@ -8,32 +8,24 @@ export function registerRecommenderElement() {
   try {
     if (!customElements.get('react-recommender')) {
       customElements.define('react-recommender', RecommenderElement);
-      console.log('✅ Successfully registered custom element: react-recommender');
     } else {
-      console.log('ℹ️ Custom element react-recommender already registered');
     }
   } catch (error) {
-    console.error('❌ Failed to register react-recommender custom element:', error);
+    console.error(' Failed to register react-recommender custom element:', error);
     if (error instanceof Error) {
       if (error.message.includes('already defined')) {
-        console.log('ℹ️ Custom element react-recommender was already defined elsewhere');
       } else if (error.message.includes('constructor')) {
-        console.error('💥 Constructor error in RecommenderElement:', error);
+        console.error(' Constructor error in RecommenderElement:', error);
       } else {
-        console.error('🔥 Unknown registration error:', error.message);
+        console.error(' Unknown registration error:', error.message);
       }
     }
-    // The error will be handled at the component level
   }
-}
-
-// Auto-register when this module is imported with error handling
+}
 try {
   registerRecommenderElement();
 } catch (criticalError) {
-  console.error('💀 Critical error during web component initialization:', criticalError);
-  
-  // Create a fallback error element
+  console.error(' Critical error during web component initialization:', criticalError);
   if (!customElements.get('react-recommender-error')) {
     class ErrorElement extends HTMLElement {
       connectedCallback() {
@@ -74,9 +66,8 @@ try {
     
     try {
       customElements.define('react-recommender', ErrorElement);
-      console.log('🚨 Registered fallback error element as react-recommender');
     } catch (fallbackError) {
-      console.error('💥 Even fallback registration failed:', fallbackError);
+      console.error(' Even fallback registration failed:', fallbackError);
     }
   }
 }

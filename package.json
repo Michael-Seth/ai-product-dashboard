@@ -38,7 +38,21 @@
     "remove-console:advanced": "node scripts/remove-console-logs-advanced.js",
     "remove-console:advanced:dry": "node scripts/remove-console-logs-advanced.js --dry-run",
     "remove-console:prod": "node scripts/remove-console-logs-advanced.js --env production",
-    "remove-console:dev": "node scripts/remove-console-logs-advanced.js --env development"
+    "remove-console:dev": "node scripts/remove-console-logs-advanced.js --env development",
+    "remove-console-symbols": "node scripts/remove-console-symbols.js",
+    "remove-console-symbols:dry": "node scripts/remove-console-symbols.js --dry-run",
+    "remove-console-symbols:emojis": "node scripts/remove-console-symbols.js --emojis-only",
+    "remove-console-symbols:symbols": "node scripts/remove-console-symbols.js --symbols-only",
+    "patch-console-symbols": "node scripts/console-symbol-patch.js --apply",
+    "patch-console-symbols:revert": "node scripts/console-symbol-patch.js --revert",
+    "organize-docs": "node scripts/organize-docs.js",
+    "organize-docs:dry": "node scripts/organize-docs.js --dry-run",
+    "organize-docs:revert": "node scripts/organize-docs.js --revert",
+    "test-ai": "node scripts/test-ai-providers.js",
+    "test-ai:verbose": "node scripts/test-ai-providers.js --verbose",
+    "test-ai:openai": "node scripts/test-ai-providers.js --provider openai",
+    "test-ai:grok": "node scripts/test-ai-providers.js --provider grok",
+    "test-ai:claude": "node scripts/test-ai-providers.js --provider claude"
   },
   "nx": {
     "includedScripts": []

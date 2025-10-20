@@ -4,6 +4,4 @@
  */
 
 import './web-component/index';
-import './styles.css';
-
-console.log('React Recommender Web Component registered as "react-recommender"');
+import './styles.css';

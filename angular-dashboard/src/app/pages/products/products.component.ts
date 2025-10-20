@@ -138,7 +138,6 @@ export class ProductsComponent implements OnInit {
 
   addToCart(product: Product, event: Event): void {
     event.stopPropagation(); // Prevent navigation when clicking add to cart
-    this.cartService.addToCart(product);
-    console.log('Added to cart:', product.name);
+    this.cartService.addToCart(product);
   }
 }

@@ -20,13 +20,8 @@ function formatBytes(bytes) {
 
 function analyzeDirectory(dirPath, appName) {
   if (!fs.existsSync(dirPath)) {
-    console.log(`❌ ${appName}: Build directory not found at ${dirPath}`);
     return;
   }
-
-  console.log(`\n📊 ${appName} Build Analysis:`);
-  console.log('=' .repeat(50));
-
   const files = [];
   
   function walkDir(dir) {
@@ -60,46 +55,31 @@ function analyzeDirectory(dirPath, appName) {
     if (!byType[type]) byType[type] = [];
     byType[type].push(file);
   });
-
-  console.log(`📦 Total Size: ${formatBytes(totalSize)}`);
-  console.log(`📄 Total Files: ${files.length}`);
-  console.log('\n📋 File Type Breakdown:');
   Object.keys(byType).sort().forEach(type => {
     const typeFiles = byType[type];
     const typeSize = typeFiles.reduce((sum, f) => sum + f.size, 0);
     const percentage = ((typeSize / totalSize) * 100).toFixed(1);
-    console.log(`  ${type.padEnd(8)} ${formatBytes(typeSize).padStart(10)} (${percentage}%)`);
-  });
-  console.log('\n🔍 Largest Files:');
+  });
   files.slice(0, 10).forEach((file, index) => {
     const percentage = ((file.size / totalSize) * 100).toFixed(1);
-    console.log(`  ${(index + 1).toString().padStart(2)}. ${file.path.padEnd(40)} ${formatBytes(file.size).padStart(10)} (${percentage}%)`);
-  });
-  console.log('\n💡 Optimization Recommendations:');
-  
+  });
   const jsFiles = files.filter(f => f.ext === '.js');
   const cssFiles = files.filter(f => f.ext === '.css');
   const largeFiles = files.filter(f => f.size > 100 * 1024); // > 100KB
 
   if (jsFiles.length > 0) {
     const jsSize = jsFiles.reduce((sum, f) => sum + f.size, 0);
-    console.log(`  • JavaScript: ${formatBytes(jsSize)} across ${jsFiles.length} files`);
     if (jsSize > 500 * 1024) {
-      console.log('    ⚠️  Consider code splitting for large JS bundles');
     }
   }
 
   if (cssFiles.length > 0) {
     const cssSize = cssFiles.reduce((sum, f) => sum + f.size, 0);
-    console.log(`  • CSS: ${formatBytes(cssSize)} across ${cssFiles.length} files`);
     if (cssSize > 50 * 1024) {
-      console.log('    ⚠️  Consider CSS purging and minification');
     }
   }
 
   if (largeFiles.length > 0) {
-    console.log(`  • ${largeFiles.length} files larger than 100KB detected`);
-    console.log('    ⚠️  Consider lazy loading or compression for large assets');
   }
 
   return {
@@ -111,14 +91,9 @@ function analyzeDirectory(dirPath, appName) {
 }
 
 function main() {
-  console.log('🔍 AI Product Dashboard - Build Analysis');
-  console.log('========================================');
-
   const distPath = path.join(__dirname, '..', 'dist');
   
   if (!fs.existsSync(distPath)) {
-    console.log('❌ No dist directory found. Run a production build first.');
-    console.log('   npm run build:prod');
     process.exit(1);
   }
 
@@ -132,10 +107,7 @@ function main() {
   
   apps.forEach(app => {
     results[app.name] = analyzeDirectory(app.path, app.name);
-  });
-  console.log('\n📈 Overall Summary:');
-  console.log('=' .repeat(50));
-  
+  });
   let totalOverallSize = 0;
   let totalOverallFiles = 0;
   
@@ -144,23 +116,10 @@ function main() {
     if (result) {
       totalOverallSize += result.totalSize;
       totalOverallFiles += result.fileCount;
-      console.log(`${appName}: ${formatBytes(result.totalSize)} (${result.fileCount} files)`);
     }
   });
-  
-  console.log(`\n🎯 Total Application Size: ${formatBytes(totalOverallSize)}`);
-  console.log(`📁 Total Files: ${totalOverallFiles}`);
-  console.log('\n🚀 Performance Recommendations:');
-  console.log('  ✅ Enable gzip/brotli compression on server');
-  console.log('  ✅ Implement HTTP/2 for better multiplexing');
-  console.log('  ✅ Use CDN for static asset delivery');
-  console.log('  ✅ Consider service worker for caching');
-  
   if (totalOverallSize > 2 * 1024 * 1024) { // > 2MB
-    console.log('  ⚠️  Total bundle size is large - consider lazy loading');
   }
-  
-  console.log('\n✨ Analysis complete!');
 }
 
 if (require.main === module) {

@@ -1,7 +1,6 @@
 
 const OpenAI = require('openai');
 
-
 function mockRecommend(productName) {
   const mockRecommendations = {
     'MacBook Air': [
@@ -31,7 +30,6 @@ function mockRecommend(productName) {
     { name: 'USB-C Charger', reason: 'Backup power solution for mobile productivity' }
   ];
 }
-
 
 async function recommendProducts(product) {
   try {
@@ -108,7 +106,6 @@ Format your response as valid JSON:
     if (error.message.includes('API key') || 
         error.message.includes('network') ||
         error.message.includes('timeout')) {
-      console.log('Falling back to mock recommendations due to API error');
       return {
         recommendations: mockRecommend(product.name)
       };
@@ -145,8 +142,7 @@ module.exports = async (req, res) => {
 
   let productName;
   
-  try {
-    // Validate request body exists
+  try {
     if (!req.body || typeof req.body !== 'object') {
       res.status(400).json({
         error: 'Bad request',
@@ -155,9 +151,7 @@ module.exports = async (req, res) => {
       return;
     }
 
-    productName = req.body.productName;
-
-    // Validate productName
+    productName = req.body.productName;
     if (!productName) {
       res.status(400).json({
         error: 'Bad request',
@@ -180,12 +174,8 @@ module.exports = async (req, res) => {
         message: 'productName cannot be empty'
       });
       return;
-    }
-
-    // Sanitize productName
-    productName = productName.trim();
-    
-    // Limit productName length to prevent abuse
+    }
+    productName = productName.trim();
     if (productName.length > 200) {
       res.status(400).json({
         error: 'Bad request',
@@ -193,32 +183,21 @@ module.exports = async (req, res) => {
       });
       return;
     }
-
-    console.log(`Received recommendation request for: ${productName}`);
-
-    // Create a mock product object for the API function
     const mockProduct = {
       id: 1,
       name: productName,
       description: `${productName} - Premium laptop computer`,
       price: 999,
       imageUrl: 'https://via.placeholder.com/300x200'
-    };
-
-    // Use the recommendation function with timeout
+    };
     const result = await Promise.race([
       recommendProducts(mockProduct),
       new Promise((_, reject) => 
         setTimeout(() => reject(new Error('API timeout after 30 seconds')), 30000)
       )
-    ]);
-
-    // Handle both success and error responses
-    if ('error' in result) {
-      // Log error but still try to provide fallback
-      console.error('Recommendation function returned error:', result);
-      
-      // If it's a service error, try fallback
+    ]);
+    if ('error' in result) {
+      console.error('Recommendation function returned error:', result);
       if (result.error === 'Service temporarily unavailable') {
         const fallbackRecommendations = mockRecommend(productName);
         res.status(200).json({
@@ -264,7 +243,6 @@ module.exports = async (req, res) => {
     try {
       if (productName && typeof productName === 'string') {
         const fallbackRecommendations = mockRecommend(productName);
-        console.log('Providing fallback recommendations due to error');
         res.status(200).json({
           recommendations: fallbackRecommendations
         });

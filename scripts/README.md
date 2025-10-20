@@ -118,6 +118,74 @@ npm run remove-console:advanced:dry
 
 Provides detailed configuration options for console statement removal.
 
+### 7. Console Symbol Remover (`remove-console-symbols.js`)
+
+A specialized script that removes only symbols and emojis from console statements while keeping the console statements themselves intact.
+
+**Features:**
+- ✅ Removes emojis (😀, 🎯, ⚡, etc.)
+- ✅ Removes symbols (→, ●, ★, ✓, etc.)
+- ✅ Preserves console statement functionality
+- ✅ Handles multi-line console statements
+- ✅ Selective removal (emojis-only or symbols-only)
+
+**Usage:**
+```bash
+# Remove all symbols and emojis from console statements
+npm run remove-console-symbols
+
+# Dry run to preview changes
+npm run remove-console-symbols:dry
+
+# Remove only emojis (keep symbols)
+npm run remove-console-symbols:emojis
+
+# Remove only symbols (keep emojis)
+npm run remove-console-symbols:symbols
+```
+
+### 8. Console Symbol Patch (`console-symbol-patch.js`)
+
+A patch tool that adds symbol/emoji removal functionality to existing console removal scripts.
+
+**Features:**
+- ✅ Patches existing console removal scripts
+- ✅ Adds symbol removal options to existing tools
+- ✅ Creates automatic backups
+- ✅ Reversible patching
+
+**Usage:**
+```bash
+# Apply the patch to existing scripts
+npm run patch-console-symbols
+
+# Revert the patch
+npm run patch-console-symbols:revert
+```
+
+### 9. Documentation Organizer (`organize-docs.js`)
+
+A utility script that organizes all .md files into a structured docs folder for better codebase organization.
+
+**Features:**
+- ✅ Creates organized docs folder structure
+- ✅ Moves all documentation files appropriately
+- ✅ Updates file references automatically
+- ✅ Creates comprehensive documentation index
+- ✅ Reversible organization
+
+**Usage:**
+```bash
+# Organize documentation into docs folder
+npm run organize-docs
+
+# Preview organization changes
+npm run organize-docs:dry
+
+# Revert organization (move files back to root)
+npm run organize-docs:revert
+```
+
 ## 🚀 Quick Start
 
 ### Preview Changes (Recommended First Step)
@@ -161,6 +229,33 @@ npm run remove-console:all
 # Environment-specific removal
 npm run remove-console:prod  # Production build
 npm run remove-console:dev   # Development cleanup
+```
+
+### Remove Only Symbols/Emojis from Console Statements
+```bash
+# Preview symbol/emoji removal
+npm run remove-console-symbols:dry
+
+# Remove all symbols and emojis (keep console statements)
+npm run remove-console-symbols
+
+# Remove only emojis
+npm run remove-console-symbols:emojis
+
+# Remove only symbols
+npm run remove-console-symbols:symbols
+```
+
+### Organize Documentation
+```bash
+# Move all .md files to organized docs folder
+npm run organize-docs
+
+# Preview documentation organization
+npm run organize-docs:dry
+
+# Revert organization (move files back to root)
+npm run organize-docs:revert
 ```
 
 ## 📖 Detailed Usage

@@ -34,7 +34,8 @@ class AdvancedConsoleLogRemover {
       removeAll: options.removeAll || false,
       pattern: options.pattern || null,
       ...options
-    };
+    };
+
     this.config = this.loadConfig();
     
     this.stats = {
@@ -45,7 +46,8 @@ class AdvancedConsoleLogRemover {
       byMethod: {},
       byFileType: {},
       preserved: 0
-    };
+    };
+
     const allMethods = [
       ...this.config.consoleMethods.remove,
       ...this.config.consoleMethods.preserve,
@@ -68,8 +70,9 @@ class AdvancedConsoleLogRemover {
         return require(configPath);
       }
     } catch (error) {
-      console.warn(`⚠️  Could not load config file: ${error.message}`);
-    }
+      console.warn(`️ Could not load config file: ${error.message}`);
+    }
+
     return require('./remove-console-logs.config.js');
   }
 
@@ -77,13 +80,13 @@ class AdvancedConsoleLogRemover {
    * Main entry point
    */
   async removeConsoleLogs(paths = ['.']) {
-    console.log('🧹 Starting advanced console.log removal process...\n');
+    console.log(' Starting advanced console.log removal process...\n');
     
     if (this.options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No files will be modified\n');
+      console.log(' DRY RUN MODE - No files will be modified\n');
     }
     
-    console.log(`🎯 Target environment: ${this.options.environment}\n`);
+    console.log(` Target environment: ${this.options.environment}\n`);
     
     try {
       for (const targetPath of paths) {
@@ -91,7 +94,7 @@ class AdvancedConsoleLogRemover {
       }
       this.printSummary();
     } catch (error) {
-      console.error('❌ Error during console.log removal:', error.message);
+      console.error(' Error during console.log removal:', error.message);
       process.exit(1);
     }
   }
@@ -118,10 +121,11 @@ class AdvancedConsoleLogRemover {
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
       
-      if (entry.isDirectory()) {
+      if (entry.isDirectory()) {
+
         if (this.config.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
-            console.log(`⏭️  Skipping directory: ${fullPath}`);
+            console.log(`⏭️ Skipping directory: ${fullPath}`);
           }
           continue;
         }
@@ -138,18 +142,22 @@ class AdvancedConsoleLogRemover {
    */
   async processFile(filePath) {
     const fileName = path.basename(filePath);
-    const fileExt = path.extname(filePath);
+    const fileExt = path.extname(filePath);
+
     if (this.config.excludeFiles.includes(fileName)) {
       return;
-    }
+    }
+
     if (!this.config.extensions.includes(fileExt)) {
       return;
-    }
+    }
+
     if (this.options.pattern && !fileName.match(new RegExp(this.options.pattern))) {
       return;
     }
     
-    this.stats.filesProcessed++;
+    this.stats.filesProcessed++;
+
     if (!this.stats.byFileType[fileExt]) {
       this.stats.byFileType[fileExt] = {
         processed: 0,
@@ -168,16 +176,18 @@ class AdvancedConsoleLogRemover {
         this.stats.byFileType[fileExt].modified++;
         
         if (this.options.verbose) {
-          console.log(`📝 Processing: ${filePath}`);
+          console.log(` Processing: ${filePath}`);
         }
         
-        if (!this.options.dryRun) {
+        if (!this.options.dryRun) {
+
           if (this.config.output.createBackups) {
             fs.writeFileSync(`${filePath}.backup`, originalContent, 'utf8');
           }
           
           fs.writeFileSync(filePath, processedContent, 'utf8');
-        }
+        }
+
         const originalLines = originalContent.split('\n').length;
         const processedLines = processedContent.split('\n').length;
         const linesRemoved = originalLines - processedLines;
@@ -185,7 +195,7 @@ class AdvancedConsoleLogRemover {
         this.stats.byFileType[fileExt].removed += linesRemoved;
       }
     } catch (error) {
-      console.error(`❌ Error processing ${filePath}:`, error.message);
+      console.error(` Error processing ${filePath}:`, error.message);
     }
   }
 
@@ -198,16 +208,19 @@ class AdvancedConsoleLogRemover {
     const envRule = this.config.environments[this.options.environment] || {};
     
     let result = content;
-    let totalRemoved = 0;
+
     const methodsToRemove = this.getMethodsToRemove(fileRule, envRule);
     
     if (methodsToRemove.length === 0) {
       return content;
-    }
-    const methodsPattern = methodsToRemove.join('|');
+    }
+
+    const methodsPattern = methodsToRemove.join('|');
+
     result = this.removeSimpleConsoleStatements(result, methodsPattern);
     result = this.removeComplexConsoleStatements(result, methodsPattern);
-    result = this.removeMultiLineConsoleStatements(result, methodsPattern);
+    result = this.removeMultiLineConsoleStatements(result, methodsPattern);
+
     if (this.config.advanced.handleTemplateLiterals) {
       result = this.removeConsoleInTemplateLiterals(result, methodsPattern);
     }
@@ -218,7 +231,8 @@ class AdvancedConsoleLogRemover {
     
     if (this.config.advanced.handleChainedCalls) {
       result = this.removeChainedConsoleCalls(result, methodsPattern);
-    }
+    }
+
     if (this.config.replacement.cleanupEmptyLines) {
       result = this.cleanupEmptyLines(result);
     }
@@ -242,21 +256,25 @@ class AdvancedConsoleLogRemover {
    * Determine which console methods to remove based on rules
    */
   getMethodsToRemove(fileRule, envRule) {
-    let methodsToRemove = [...this.config.consoleMethods.remove];
+    let methodsToRemove = [...this.config.consoleMethods.remove];
+
     if (this.options.removeAll || envRule.removeAll) {
       methodsToRemove = [
         ...this.config.consoleMethods.remove,
         ...this.config.consoleMethods.preserve,
         ...this.config.consoleMethods.conditionalRemove
       ];
-    } else {
+    } else {
+
       if (this.options.environment === 'production') {
         methodsToRemove.push(...this.config.consoleMethods.conditionalRemove);
-      }
+      }
+
       if (!this.options.preserveErrors && !envRule.preserveErrors) {
         methodsToRemove.push(...this.config.consoleMethods.preserve);
       }
-    }
+    }
+
     if (fileRule) {
       if (fileRule.preserveAll) {
         return [];
@@ -351,10 +369,12 @@ class AdvancedConsoleLogRemover {
           result.push(line);
           i++;
           continue;
-        }
+        }
+
         const endIndex = this.findConsoleStatementEnd(lines, i);
         
-        if (endIndex > i) {
+        if (endIndex > i) {
+
           this.stats.byMethod[method].removed++;
           this.stats.consoleStatementsRemoved++;
           i = endIndex + 1;
@@ -517,41 +537,41 @@ class AdvancedConsoleLogRemover {
    * Print detailed summary
    */
   printSummary() {
-    console.log('\n📊 Advanced Console.log Removal Summary:');
+    console.log('\n Advanced Console.log Removal Summary:');
     console.log('═'.repeat(55));
-    console.log(`📁 Files processed: ${this.stats.filesProcessed}`);
-    console.log(`✏️  Files modified: ${this.stats.filesModified}`);
-    console.log(`🖥️  Console statements removed: ${this.stats.consoleStatementsRemoved}`);
-    console.log(`🛡️  Console statements preserved: ${this.stats.preserved}`);
-    console.log(`📄 Lines removed: ${this.stats.linesRemoved}`);
+    console.log(` Files processed: ${this.stats.filesProcessed}`);
+    console.log(`️ Files modified: ${this.stats.filesModified}`);
+    console.log(`️ Console statements removed: ${this.stats.consoleStatementsRemoved}`);
+    console.log(`️ Console statements preserved: ${this.stats.preserved}`);
+    console.log(` Lines removed: ${this.stats.linesRemoved}`);
     
     // Show breakdown by method
-    console.log('\n📋 Breakdown by console method:');
+    console.log('\n Breakdown by console method:');
     for (const [method, stats] of Object.entries(this.stats.byMethod)) {
       if (stats.removed > 0 || stats.preserved > 0) {
-        console.log(`  console.${method}: ${stats.removed} removed, ${stats.preserved} preserved`);
+        console.log(` console.${method}: ${stats.removed} removed, ${stats.preserved} preserved`);
       }
     }
     
     // Show breakdown by file type
-    console.log('\n📁 Breakdown by file type:');
+    console.log('\n Breakdown by file type:');
     for (const [ext, stats] of Object.entries(this.stats.byFileType)) {
       if (stats.processed > 0) {
-        console.log(`  ${ext}: ${stats.processed} processed, ${stats.modified} modified, ${stats.removed} lines removed`);
+        console.log(` ${ext}: ${stats.processed} processed, ${stats.modified} modified, ${stats.removed} lines removed`);
       }
     }
     
     if (this.options.dryRun) {
-      console.log('\n🔍 This was a dry run - no files were actually modified');
-      console.log('   Run without --dry-run to apply changes');
+      console.log('\n This was a dry run - no files were actually modified');
+      console.log(' Run without --dry-run to apply changes');
     } else {
-      console.log('\n✅ Advanced console.log removal completed successfully!');
+      console.log('\n Advanced console.log removal completed successfully!');
     }
     
-    console.log('\n💡 Recommendations:');
-    console.log('   • Run tests to ensure functionality after removal');
-    console.log('   • Consider implementing a proper logging library');
-    console.log('   • Review preserved statements for production readiness');
+    console.log('\n Recommendations:');
+    console.log(' • Run tests to ensure functionality after removal');
+    console.log(' • Consider implementing a proper logging library');
+    console.log(' • Review preserved statements for production readiness');
   }
 
   /**
@@ -559,7 +579,7 @@ class AdvancedConsoleLogRemover {
    */
   static showHelp() {
     console.log(`
-🧹 Advanced Console.log Removal Script for AI E-commerce Platform
+🚀 Advanced Console.log Removal Script for AI E-commerce Platform
 
 Enhanced version with configuration support and environment-specific rules.
 
@@ -567,14 +587,14 @@ Usage:
   node scripts/remove-console-logs-advanced.js [options] [paths...]
 
 Options:
-  --config <path>       Use custom configuration file
-  --dry-run             Show what would be changed without modifying files
-  --env <environment>   Target environment (development, production, test)
-  --preserve-errors     Preserve console.error and console.warn
-  --remove-all          Remove all console statements
-  --verbose             Show detailed output
-  --pattern <regex>     Process only files matching pattern
-  --help                Show this help message
+  --config <path>      Use custom configuration file
+  --dry-run            Show what would be changed without modifying files
+  --env <environment>  Target environment (development, production, test)
+  --preserve-errors    Preserve console.error and console.warn
+  --remove-all         Remove all console statements
+  --verbose            Show detailed output
+  --pattern <regex>    Process only files matching pattern
+  --help               Show this help message
 
 Examples:
   # Production build (removes most console statements)
@@ -593,71 +613,15 @@ Examples:
   node scripts/remove-console-logs-advanced.js --config ./my-console-config.js
 
 Configuration Features:
-  🎯 Environment-specific rules (dev, prod, test)
-  🎯 File-type specific handling
-  🎯 Preserve patterns for important statements
-  🎯 Advanced console statement detection
-  🎯 Backup creation and cleanup options
+  ✓ Environment-specific rules (dev, prod, test)
+  ✓ File-type specific handling
+  ✓ Preserve patterns for important statements
+  ✓ Advanced console statement detection
+  ✓ Backup creation and cleanup options
 
 Safety Features:
-  🔒 Dry run mode for safe testing
-  🔒 Configurable preserve patterns
-  🔒 Environment-aware processing
-  🔒 Detailed statistics and reporting
-`);
-  }
-}
-
-// CLI Interface
-async function main() {
-  const args = process.argv.slice(2);
-  
-  // Parse command line arguments
-  const options = {
-    dryRun: args.includes('--dry-run'),
-    verbose: args.includes('--verbose'),
-    preserveErrors: args.includes('--preserve-errors'),
-    removeAll: args.includes('--remove-all'),
-    help: args.includes('--help') || args.includes('-h')
-  };
-  
-  // Parse config option
-  const configIndex = args.indexOf('--config');
-  if (configIndex !== -1 && args[configIndex + 1]) {
-    options.configPath = args[configIndex + 1];
-  }
-  
-  // Parse environment option
-  const envIndex = args.indexOf('--env');
-  if (envIndex !== -1 && args[envIndex + 1]) {
-    options.env = args[envIndex + 1];
-  }
-  
-  // Parse pattern option
-  const patternIndex = args.indexOf('--pattern');
-  if (patternIndex !== -1 && args[patternIndex + 1]) {
-    options.pattern = args[patternIndex + 1];
-  }
-  
-  if (options.help) {
-    AdvancedConsoleLogRemover.showHelp();
-    return;
-  }
-  
-  // Get paths to process
-  const paths = args.filter(arg => 
-    !arg.startsWith('--') && 
-    !args[args.indexOf(arg) - 1]?.startsWith('--')
-  );
-  
-  const remover = new AdvancedConsoleLogRemover(options);
-  await remover.removeConsoleLogs(paths.length > 0 ? paths : ['.']);
-}
-
-// Export for testing
-module.exports = AdvancedConsoleLogRemover;
-
-// Run if called directly
-if (require.main === module) {
-  main().catch(console.error);
-}
+  ✓ Dry run mode for safe testing
+  ✓ Configurable preserve patterns
+  ✓ Environment-aware processing
+  ✓ Detailed statistics and reporting
+    `); } }
