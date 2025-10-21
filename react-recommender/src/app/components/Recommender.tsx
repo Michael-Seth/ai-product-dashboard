@@ -19,9 +19,30 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     isFetching,
   } = useGetRecommendationsQuery(product?.name || '', {
     skip: !product,
-
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true,
+  });
+
+  // Mock data fallback for development
+  const mockRecommendations: Recommendation[] = [
+    { name: 'Premium Laptop Sleeve', reason: 'Perfect protection for your device' },
+    { name: 'Wireless Mouse', reason: 'Enhance your productivity' },
+    { name: 'USB-C Hub', reason: 'Expand your connectivity options' },
+  ];
+
+  // Use mock data if API fails
+  const recommendations = data?.recommendations || (isError ? mockRecommendations : []);
+
+  console.log('📊 Recommender component state:', {
+    hasProduct: !!product,
+    productName: product?.name,
+    isLoading,
+    isError,
+    hasApiData: !!data,
+    apiRecommendations: data?.recommendations?.length || 0,
+    usingMockData: isError && recommendations.length > 0,
+    totalRecommendations: recommendations.length,
+    recommendations
   });
 
   const handleRetry = useCallback(async () => {
@@ -178,10 +199,12 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     );
   }
 
-  // Success state with recommendations
-  const recommendations = data?.recommendations || [];
+  // Success state with recommendations (already defined above)
+
+  console.log('✅ Rendering recommendations:', recommendations);
 
   if (recommendations.length === 0) {
+    console.log('⚠️ No recommendations to display');
     return (
       <div className="empty-state fade-in">
         <div className="w-16 h-16 bg-yellow-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -202,6 +225,8 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
       </div>
     );
   }
+
+  console.log('🎨 Rendering recommendation cards:', recommendations.length);
 
   return (
     <div className="fade-in">

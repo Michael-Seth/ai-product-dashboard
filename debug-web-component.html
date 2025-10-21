@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug React Web Component</title>
+    <link rel="stylesheet" href="/react-recommender.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .debug-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 React Web Component Debug Test</h1>
+        
+        <div class="debug-info">
+            <h3>Test Product Data:</h3>
+            <pre id="product-data"></pre>
+        </div>
+
+        <div class="debug-info">
+            <h3>Component Status:</h3>
+            <div id="status">Loading...</div>
+        </div>
+
+        <h2>React Recommender Component:</h2>
+        <div style="border: 2px dashed #ccc; padding: 20px; border-radius: 8px;">
+            <react-recommender id="test-component"></react-recommender>
+        </div>
+    </div>
+
+    <script>
+        // Test product data
+        const testProduct = {
+            id: '1',
+            name: 'MacBook Air M2',
+            description: 'Lightweight laptop with M2 chip',
+            price: 1199,
+            image: 'https://via.placeholder.com/300x200'
+        };
+
+        document.getElementById('product-data').textContent = JSON.stringify(testProduct, null, 2);
+
+        // Load the React web component
+        const script = document.createElement('script');
+        script.src = '/react-recommender.umd.js';
+        script.onload = () => {
+            console.log('✅ React web component loaded');
+            document.getElementById('status').innerHTML = '✅ Web component loaded successfully';
+            
+            // Set the product data
+            const component = document.getElementById('test-component');
+            component.setAttribute('product', JSON.stringify(testProduct));
+            
+            console.log('📦 Product data set on component');
+        };
+        
+        script.onerror = (error) => {
+            console.error('❌ Failed to load React web component:', error);
+            document.getElementById('status').innerHTML = '❌ Failed to load web component';
+        };
+        
+        document.head.appendChild(script);
+
+        // Test API endpoint
+        setTimeout(async () => {
+            try {
+                console.log('🧪 Testing API endpoint...');
+                const response = await fetch('/api/recommendations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ product: testProduct })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ API working:', data);
+                } else {
+                    console.error('❌ API error:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('❌ API test failed:', error);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

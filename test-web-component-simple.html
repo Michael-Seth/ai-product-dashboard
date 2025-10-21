@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Web Component Test</title>
+    <link rel="stylesheet" href="/react-recommender.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Simple Web Component Test</h1>
+        
+        <div class="test-section">
+            <h3>Test 1: Empty Component</h3>
+            <react-recommender id="test1"></react-recommender>
+        </div>
+
+        <div class="test-section">
+            <h3>Test 2: Component with Product Data</h3>
+            <react-recommender id="test2"></react-recommender>
+        </div>
+
+        <div class="test-section">
+            <h3>Debug Info</h3>
+            <div id="debug-info">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Starting web component test...');
+        
+        // Test product data
+        const testProduct = {
+            id: '1',
+            name: 'MacBook Air M2',
+            description: 'Lightweight laptop with M2 chip',
+            price: 1199,
+            image: 'https://via.placeholder.com/300x200'
+        };
+
+        function updateDebugInfo() {
+            const debugDiv = document.getElementById('debug-info');
+            const isRegistered = !!customElements.get('react-recommender');
+            
+            debugDiv.innerHTML = `
+                <p><strong>Custom Element Registered:</strong> ${isRegistered ? '✅ Yes' : '❌ No'}</p>
+                <p><strong>CustomElements Object:</strong> ${typeof customElements}</p>
+                <p><strong>Test Product:</strong> ${JSON.stringify(testProduct, null, 2)}</p>
+            `;
+        }
+
+        // Load the React web component
+        const script = document.createElement('script');
+        script.src = '/react-recommender.js';
+        
+        script.onload = () => {
+            console.log('✅ Script loaded successfully');
+            
+            // Wait a bit for registration
+            setTimeout(() => {
+                updateDebugInfo();
+                
+                // Set product data on test2
+                const test2Element = document.getElementById('test2');
+                if (test2Element) {
+                    console.log('🔄 Setting product data on test2...');
+                    test2Element.setAttribute('product', JSON.stringify(testProduct));
+                    console.log('✅ Product data set');
+                }
+            }, 1000);
+        };
+        
+        script.onerror = (error) => {
+            console.error('❌ Failed to load script:', error);
+            document.getElementById('debug-info').innerHTML = `
+                <p style="color: red;"><strong>Error:</strong> Failed to load web component script</p>
+            `;
+        };
+        
+        document.head.appendChild(script);
+        
+        // Initial debug info
+        updateDebugInfo();
+    </script>
+</body>
+</html>

@@ -21,9 +21,9 @@ export default defineConfig(() => ({
     outDir: '../dist/react-recommender',
     emptyOutDir: true,
     reportCompressedSize: true,
-    minify: 'terser',
+    minify: 'esbuild' as const,
     sourcemap: false,
-    target: 'es2020',
+    target: 'es2022',
     rollupOptions: {
       output: {
         manualChunks: {

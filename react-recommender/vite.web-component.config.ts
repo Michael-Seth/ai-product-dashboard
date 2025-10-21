@@ -7,26 +7,31 @@ export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../node_modules/.vite/react-recommender-web-component',
   plugins: [react(), nxViteTsPaths()],
+  define: {
+    'process.env': {},
+    'process.env.NODE_ENV': JSON.stringify('production'),
+    global: 'globalThis',
+  },
   build: {
     outDir: '../dist/react-recommender-web-component',
     emptyOutDir: true,
     reportCompressedSize: true,
-    minify: 'terser',
-    sourcemap: false,
+    minify: false, // Disable minification for debugging
+    sourcemap: true, // Enable source maps for debugging
     target: 'es2020',
     lib: {
-      entry: 'src/web-component-main.tsx',
+      entry: './src/web-component-main.tsx',
       name: 'ReactRecommender',
       fileName: 'react-recommender',
-      formats: ['es', 'umd']
+      formats: ['iife']
     },
     rollupOptions: {
+      treeshake: false, // Disable tree shaking to preserve side effects
       external: [],
       output: {
         globals: {},
-        chunkFileNames: '[name]-[hash].js',
-        entryFileNames: '[name]-[hash].js',
-        assetFileNames: '[name]-[hash].[ext]'
+        entryFileNames: 'react-recommender.js',
+        assetFileNames: 'react-recommender.[ext]'
       }
     },
     commonjsOptions: {

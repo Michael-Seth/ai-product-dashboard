@@ -14,11 +14,29 @@ export class RecommenderElement extends HTMLElement {
   private root: Root | null = null;
   private store = setupStore();
   private renderTimeout: NodeJS.Timeout | null = null;
+  private _product: Product | null = null;
 
   constructor() {
-    super();
+    super();
+    console.log('🏗️ RecommenderElement constructor called');
+
     this.style.display = 'block';
     this.style.width = '100%';
+  }
+
+  /**
+   * Property setter for product (alternative to attribute)
+   */
+  set product(value: Product | null) {
+    console.log('📝 Product property setter called:', value);
+    this._product = value;
+    if (this.isConnected) {
+      this.render();
+    }
+  }
+
+  get product(): Product | null {
+    return this._product || this.parseProduct();
   }
 
   /**
@@ -32,11 +50,17 @@ export class RecommenderElement extends HTMLElement {
    * Called when the element is added to the DOM
    */
   connectedCallback() {
-    try {
-      this.render();
-    } catch (error) {
-      console.error('Error in connectedCallback:', error);
-      this.renderErrorFallback('Failed to initialize recommendation widget');
+    console.log('🔌 RecommenderElement connected to DOM');
+    // Only render if we have a product attribute
+    if (this.hasAttribute('product')) {
+      try {
+        this.render();
+      } catch (error) {
+        console.error('Error in connectedCallback:', error);
+        this.renderErrorFallback('Failed to initialize recommendation widget');
+      }
+    } else {
+      console.log('⏳ Waiting for product attribute...');
     }
   }
 
@@ -47,7 +71,8 @@ export class RecommenderElement extends HTMLElement {
     if (this.renderTimeout) {
       clearTimeout(this.renderTimeout);
       this.renderTimeout = null;
-    }
+    }
+
     try {
       if (this.root) {
         this.root.unmount();
@@ -62,16 +87,21 @@ export class RecommenderElement extends HTMLElement {
    * Called when observed attributes change
    */
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    if (name === 'product' && oldValue !== newValue) {
+    console.log('🔄 attributeChangedCallback called:', { name, oldValue: oldValue?.substring(0, 50), newValue: newValue?.substring(0, 50) });
+    
+    if (name === 'product' && oldValue !== newValue) {
+      console.log('✅ Product attribute changed, scheduling render...');
+
       if (this.renderTimeout) {
         clearTimeout(this.renderTimeout);
       }
-      
+
       this.renderTimeout = setTimeout(() => {
         try {
+          console.log('🎨 Calling render from attributeChangedCallback...');
           this.render();
         } catch (error) {
-          console.error('Error in attributeChangedCallback:', error);
+          console.error('❌ Error in attributeChangedCallback:', error);
           this.renderErrorFallback('Failed to update recommendations');
         }
       }, 100);
@@ -83,13 +113,18 @@ export class RecommenderElement extends HTMLElement {
    */
   private parseProduct(): Product | null {
     const productAttr = this.getAttribute('product');
-    
+
+    console.log('🔍 Parsing product attribute:', productAttr);
+
     if (!productAttr) {
+      console.log('❌ No product attribute found');
       return null;
     }
 
     try {
-      const parsed = JSON.parse(productAttr);
+      const parsed = JSON.parse(productAttr);
+      console.log('✅ Successfully parsed product:', parsed);
+
       if (!parsed || typeof parsed !== 'object') {
         throw new Error('Product must be an object');
       }
@@ -99,7 +134,7 @@ export class RecommenderElement extends HTMLElement {
       }
       return parsed as Product;
     } catch (error) {
-      console.error('Failed to parse product attribute:', error, 'Raw value:', productAttr);
+      console.error('❌ Failed to parse product attribute:', error, 'Raw value:', productAttr);
       return null;
     }
   }
@@ -147,17 +182,27 @@ export class RecommenderElement extends HTMLElement {
    * Render the React component within the Web Component
    */
   private render() {
-    try {
-      if (!this.root) {
-        this.innerHTML = '';
+    try {
+      console.log('🎨 Rendering web component...');
+
+      if (!this.root) {
+        console.log('🏗️ Creating new React root...');
+
+        this.innerHTML = '';
+
         const container = document.createElement('div');
         container.style.width = '100%';
         container.style.height = '100%';
-        
+
         this.appendChild(container);
         this.root = createRoot(container);
-      }
-      const product = this.parseProduct();
+      }
+
+      // Use _product property if set, otherwise parse from attribute
+      const product = this._product || this.parseProduct();
+      console.log('📦 Product for rendering:', product);
+      console.log('📦 Product source:', this._product ? 'property' : 'attribute');
+
       const errorFallback = (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
           <div className="text-red-800 font-semibold mb-2">
@@ -166,14 +211,16 @@ export class RecommenderElement extends HTMLElement {
           <div className="text-red-700 text-sm mb-3">
             The recommendation widget encountered an error and needs to be reloaded.
           </div>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
           >
             Reload Page
           </button>
         </div>
-      );
+      );
+
+      console.log('🚀 Rendering React component with product:', product);
       this.root.render(
         <ErrorBoundary fallback={errorFallback}>
           <Provider store={this.store}>
@@ -185,8 +232,9 @@ export class RecommenderElement extends HTMLElement {
           </Provider>
         </ErrorBoundary>
       );
+      console.log('✅ React component rendered successfully');
     } catch (error) {
-      console.error('Critical error in render method:', error);
+      console.error('❌ Critical error in render method:', error);
       this.renderErrorFallback('Critical rendering error occurred');
     }
   }

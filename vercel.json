@@ -1,103 +1,19 @@
 {
   "version": 2,
-  "name": "ai-product-dashboard",
-  "buildCommand": "npm run build:prod",
-  "outputDirectory": "dist/angular-dashboard/browser",
-  "installCommand": "npm install",
-  "functions": {
-    "api/recommendations.js": {
-      "runtime": "nodejs18.x",
-      "maxDuration": 10
-    },
-    "api/health.js": {
-      "runtime": "nodejs18.x",
-      "maxDuration": 5
-    }
-  },
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/recommendations",
-      "destination": "/api/recommendations.js"
-    },
-    {
-      "source": "/api/health",
-      "destination": "/api/health.js"
-    },
-    {
-      "source": "/react-recommender.css",
-      "destination": "/dist/react-recommender-web-component/react-recommender.css"
-    },
-    {
-      "source": "/react-recommender.umd.js",
-      "destination": "/dist/react-recommender-web-component/react-recommender.umd.js"
-    },
-    {
-      "source": "/react-recommender.mjs",
-      "destination": "/dist/react-recommender-web-component/react-recommender.mjs"
-    },
-    {
-      "source": "/react-recommender/(.*)",
-      "destination": "/dist/react-recommender/$1"
-    },
-    {
-      "source": "/react-recommender-web-component/(.*)",
-      "destination": "/dist/react-recommender-web-component/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "dist/angular-dashboard/browser/**",
+      "use": "@vercel/static"
     }
   ],
-  "headers": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
-        }
-      ]
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "dest": "/dist/angular-dashboard/browser/$1"
     },
     {
-      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        }
-      ]
-    },
-    {
-      "source": "/dist/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        }
-      ]
+      "src": "/(.*)",
+      "dest": "/dist/angular-dashboard/browser/index.html"
     }
-  ],
-  "env": {
-    "OPENAI_API_KEY": "@openai_api_key"
-  }
+  ]
 }

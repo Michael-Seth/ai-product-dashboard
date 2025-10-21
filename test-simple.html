@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Web Component Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-container { border: 2px solid #ccc; padding: 20px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Simple React Web Component Test</h1>
+    
+    <div class="test-container">
+        <h2>Test 1: Basic Component</h2>
+        <react-recommender></react-recommender>
+    </div>
+
+    <div class="test-container">
+        <h2>Test 2: With Product Data</h2>
+        <react-recommender product='{"id":"1","name":"Test Product","description":"Test Description","price":99}'></react-recommender>
+    </div>
+
+    <script>
+        console.log('🧪 Loading web component...');
+        
+        // Load CSS
+        const css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = './angular-dashboard/public/react-recommender.css';
+        document.head.appendChild(css);
+        
+        // Load JS
+        const script = document.createElement('script');
+        script.src = './angular-dashboard/public/react-recommender.umd.js';
+        script.onload = () => {
+            console.log('✅ Web component loaded');
+        };
+        script.onerror = (e) => {
+            console.error('❌ Failed to load web component:', e);
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

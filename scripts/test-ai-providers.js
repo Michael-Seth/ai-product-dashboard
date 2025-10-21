@@ -15,8 +15,8 @@
  *   --help             Show this help message
  */
 
-const { AIService } = require('../shared-api/src/lib/ai-service');
-const { mockRecommend } = require('../shared-api/src/lib/ai-service');
+const { AIService } = require('../dist/shared-api/ai-service');
+const { mockRecommend } = require('../dist/shared-api/ai-service');
 
 class AIProviderTester {
   constructor(options = {}) {
@@ -58,7 +58,8 @@ class AIProviderTester {
         await this.testProvider(this.options.provider);
       } else {
         await this.testAllProviders();
-      }
+      }
+
       await this.showSummary();
       
     } catch (error) {
@@ -83,14 +84,16 @@ class AIProviderTester {
    * Test a specific provider
    */
   async testProvider(providerName) {
-    try {
+    try {
+
       const availableProviders = this.aiService.getAvailableProviders();
       const isAvailable = availableProviders.includes(providerName);
       
       if (!isAvailable) {
         this.showProviderSetupInstructions(providerName);
         return;
-      }
+      }
+
       const switched = await this.aiService.switchProvider(providerName);
       if (!switched) {
         return;
@@ -115,7 +118,8 @@ class AIProviderTester {
           });
         }
       } else {
-      }
+      }
+
       const adapterInfo = this.aiService.getAdapterInfo();
       const providerInfo = adapterInfo[providerName];
       
@@ -195,6 +199,16 @@ class AIProviderTester {
    * Show help message
    */
   static showHelp() {
+    console.log(`
+🤖 AI Provider Testing Script for AI E-commerce Platform
+
+Test AI providers and their recommendation capabilities.
+
+Usage:
+  node scripts/test-ai-providers.js [options]
+
+Options:
+  --provider <name>  Test specific provider (openai, grok, claude)
   --verbose          Show detailed output including sample recommendations
   --help             Show this help message
 
@@ -215,24 +229,18 @@ Supported Providers:
   ✅ openai      - OpenAI GPT models
   ✅ grok        - X.AI Grok models
   ✅ claude      - Anthropic Claude models
-  🚧 gemini      - Google Gemini models (coming soon)
-  🚧 cohere      - Cohere models (coming soon)
-  🚧 huggingface - Hugging Face models (coming soon)
-  ✅ mock        - Mock provider (always available)
 
-Environment Variables:
-  OPENAI_API_KEY     - OpenAI API key
-  GROK_API_KEY       - Grok/X.AI API key
-  CLAUDE_API_KEY     - Claude/Anthropic API key
-  GEMINI_API_KEY     - Gemini/Google API key
-  COHERE_API_KEY     - Cohere API key
-  HUGGINGFACE_API_KEY - Hugging Face API key
+Environment Variables Required:
+  OPENAI_API_KEY     - For OpenAI provider
+  GROK_API_KEY       - For Grok provider
+  CLAUDE_API_KEY     - For Claude provider (optional)
 
 Configuration:
   Check .env.example for complete configuration options.
-`);
+    `);
   }
-}
+}
+
 async function main() {
   const args = process.argv.slice(2);
   
@@ -240,7 +248,8 @@ async function main() {
     provider: null,
     verbose: args.includes('--verbose'),
     help: args.includes('--help') || args.includes('-h')
-  };
+  };
+
   const providerIndex = args.indexOf('--provider');
   if (providerIndex !== -1 && args[providerIndex + 1]) {
     options.provider = args[providerIndex + 1];
@@ -253,8 +262,10 @@ async function main() {
   
   const tester = new AIProviderTester(options);
   await tester.runTests();
-}
-module.exports = AIProviderTester;
+}
+
+module.exports = AIProviderTester;
+
 if (require.main === module) {
   main().catch(console.error);
 }

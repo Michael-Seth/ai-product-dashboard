@@ -6,7 +6,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { store } from '../store';
 
 const sampleProduct: Product = {
-  id: 1,
+  id: '1',
   name: 'MacBook Air M2',
   description: 'Lightweight laptop with M2 chip',
   price: 1199,
