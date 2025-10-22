@@ -21,7 +21,7 @@ async function testAIService() {
     });
     
   } catch (error) {
-    console.error('❌ AI Service failed:', error.message);
+    console.error(' AI Service failed:', error.message);
     console.error('Stack:', error.stack);
   }
 }

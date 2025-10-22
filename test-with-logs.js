@@ -26,7 +26,8 @@ async function testWithLogs() {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json();
+
     const isAI = data.recommendations.some(rec => 
       rec.id.startsWith('openai-') || 
       rec.id.startsWith('grok-') || 
@@ -41,7 +42,7 @@ async function testWithLogs() {
     });
     
   } catch (error) {
-    console.error('❌ Test failed:', error.message);
+    console.error(' Test failed:', error.message);
   }
 }
 

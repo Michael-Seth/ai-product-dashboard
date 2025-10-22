@@ -31,7 +31,7 @@ async function testAPI() {
     data.recommendations.forEach((rec, index) => {
     });
   } catch (error) {
-    console.error('❌ Test failed:', error.message);
+    console.error(' Test failed:', error.message);
   }
 }
 

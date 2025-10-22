@@ -63,7 +63,7 @@ class AIProviderTester {
       await this.showSummary();
       
     } catch (error) {
-      console.error('❌ Error during testing:', error.message);
+      console.error(' Error during testing:', error.message);
       process.exit(1);
     }
   }
@@ -182,7 +182,7 @@ class AIProviderTester {
     const adapterInfo = this.aiService.getAdapterInfo();
     const activeProvider = this.aiService.getActiveProvider();
     for (const [provider, isHealthy] of Object.entries(healthStatus)) {
-      const status = isHealthy ? '✅ Healthy' : '❌ Unhealthy';
+      const status = isHealthy ? '✅ Healthy' : ' Unhealthy';
       const info = adapterInfo[provider];
       const model = info?.model ? ` (${info.model})` : '';
     }

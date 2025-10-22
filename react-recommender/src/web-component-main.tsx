@@ -13,7 +13,6 @@ try {
       customElements.define('react-recommender', RecommenderElement);
 
       const verifyElement = customElements.get('react-recommender');
-    } else {
     }
   } else {
     console.error('customElements API not available');
@@ -26,6 +25,3 @@ try {
 }
 
 export { RecommenderElement };
-
-export default function() {
-};

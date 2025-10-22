@@ -70,7 +70,7 @@ class CommentRemover {
       await this.processDirectory(rootDir);
       this.printSummary();
     } catch (error) {
-      console.error('❌ Error during comment removal:', error.message);
+      console.error(' Error during comment removal:', error.message);
       process.exit(1);
     }
   }
@@ -130,7 +130,7 @@ class CommentRemover {
         this.stats.linesRemoved += (originalLines - processedLines);
       }
     } catch (error) {
-      console.error(`❌ Error processing ${filePath}:`, error.message);
+      console.error(` Error processing ${filePath}:`, error.message);
     }
   }
 
@@ -245,13 +245,12 @@ class CommentRemover {
 
 
   printSummary() {
-    if (this.options.dryRun) {
-    } else {
-    }
+    // Summary already printed by console removal script
   }
 
 
   static showHelp() {
+    console.log('Usage: node scripts/remove-comments.js [options]');
   }
 }
 

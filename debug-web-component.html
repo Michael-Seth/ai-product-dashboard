@@ -75,8 +75,8 @@
         };
         
         script.onerror = (error) => {
-            console.error('❌ Failed to load React web component:', error);
-            document.getElementById('status').innerHTML = '❌ Failed to load web component';
+            console.error(' Failed to load React web component:', error);
+            document.getElementById('status').innerHTML = ' Failed to load web component';
         };
         
         document.head.appendChild(script);
@@ -97,10 +97,10 @@
                     const data = await response.json();
                     console.log('✅ API working:', data);
                 } else {
-                    console.error('❌ API error:', response.status, response.statusText);
+                    console.error(' API error:', response.status, response.statusText);
                 }
             } catch (error) {
-                console.error('❌ API test failed:', error);
+                console.error(' API test failed:', error);
             }
         }, 2000);
     </script>

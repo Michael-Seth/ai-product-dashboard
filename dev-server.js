@@ -6,19 +6,23 @@ const app = express();
 const PORT = process.env.PORT || 3005;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json());
+
 async function getAIRecommendations(productName) {
-  try {
+  try {
+
     if (process.env.OPENAI_API_KEY) {
       return await getOpenAIRecommendations(productName);
-    }
+    }
+
     if (process.env.GROK_API_KEY) {
       return await getGrokRecommendations(productName);
-    }
+    }
+
     return getMockRecommendations(productName);
     
   } catch (error) {
-    console.error('❌ AI API Error:', error.message);
+    console.error(' AI API Error:', error.message);
     return getMockRecommendations(productName);
   }
 }
@@ -116,7 +120,8 @@ async function getGrokRecommendations(productName) {
   }
 }
 
-function getMockRecommendations(productName) {
+function getMockRecommendations(productName) {
+
   return [
     {
       name: `${productName} Pro Case`,
@@ -146,7 +151,8 @@ function getMockRecommendations(productName) {
 }
 
 app.post('/api/recommendations', async (req, res) => {
-  const { product, productName } = req.body;
+  const { product, productName } = req.body;
+
   const name = product?.name || productName;
   
   if (!name || typeof name !== 'string' || name.trim().length === 0) {
@@ -161,7 +167,7 @@ app.post('/api/recommendations', async (req, res) => {
     res.json({ recommendations });
     
   } catch (error) {
-    console.error('❌ Error generating recommendations:', error);
+    console.error(' Error generating recommendations:', error);
     res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to generate recommendations. Please try again.'

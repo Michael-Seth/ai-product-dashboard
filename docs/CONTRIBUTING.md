@@ -167,7 +167,7 @@ class ProductService {
   }
 }
 
-// ❌ Avoid: Any types and unclear naming
+//  Avoid: Any types and unclear naming
 class Service {
   data: any;
   
@@ -309,7 +309,7 @@ export const Recommender: React.FC<RecommenderProps> = ({
   }
 }
 
-// ❌ Avoid: Unclear naming and no structure
+//  Avoid: Unclear naming and no structure
 .card {
   padding: 10px;
 }

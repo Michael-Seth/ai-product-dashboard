@@ -64,7 +64,7 @@
             const isRegistered = !!customElements.get('react-recommender');
             
             debugDiv.innerHTML = `
-                <p><strong>Custom Element Registered:</strong> ${isRegistered ? '✅ Yes' : '❌ No'}</p>
+                <p><strong>Custom Element Registered:</strong> ${isRegistered ? '✅ Yes' : ' No'}</p>
                 <p><strong>CustomElements Object:</strong> ${typeof customElements}</p>
                 <p><strong>Test Product:</strong> ${JSON.stringify(testProduct, null, 2)}</p>
             `;
@@ -92,7 +92,7 @@
         };
         
         script.onerror = (error) => {
-            console.error('❌ Failed to load script:', error);
+            console.error(' Failed to load script:', error);
             document.getElementById('debug-info').innerHTML = `
                 <p style="color: red;"><strong>Error:</strong> Failed to load web component script</p>
             `;

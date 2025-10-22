@@ -16,7 +16,7 @@ import { BaseAIAdapter } from './base-adapter';
  */
 export class ClaudeAdapter extends BaseAIAdapter {
   private apiKey: string | null = null;
-  private baseUrl: string = 'https://api.anthropic.com/v1/messages';
+  private baseUrl = 'https://api.anthropic.com/v1/messages';
 
   constructor() {
     super('claude');
@@ -32,7 +32,8 @@ export class ClaudeAdapter extends BaseAIAdapter {
 
     if (!config.apiKey) {
       throw new Error('Claude API key is required');
-    }
+    }
+
     const validModels = [
       'claude-3-opus-20240229',
       'claude-3-sonnet-20240229', 
@@ -51,7 +52,8 @@ export class ClaudeAdapter extends BaseAIAdapter {
     const claudeConfig = config as ClaudeConfig;
     
     this.apiKey = claudeConfig.apiKey!;
-    this.baseUrl = claudeConfig.baseUrl || 'https://api.anthropic.com/v1/messages';
+    this.baseUrl = claudeConfig.baseUrl || 'https://api.anthropic.com/v1/messages';
+
     await this.testConnection();
   }
 
@@ -63,7 +65,8 @@ export class ClaudeAdapter extends BaseAIAdapter {
       throw new Error('Claude API key not set');
     }
 
-    try {
+    try {
+
       const response = await Promise.race([
         fetch(this.baseUrl, {
           method: 'POST',
@@ -130,7 +133,8 @@ export class ClaudeAdapter extends BaseAIAdapter {
       ]);
 
       if (!response.ok) {
-        const errorText = await response.text();
+        const errorText = await response.text();
+
         if (response.status === 401) {
           throw new Error('Invalid Claude API key.');
         } else if (response.status === 429) {
@@ -148,7 +152,8 @@ export class ClaudeAdapter extends BaseAIAdapter {
       return data;
 
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof Error) {
+
         if (error.message.includes('fetch') || error.message.includes('network')) {
           throw new Error('Network error connecting to Claude API.');
         }
@@ -166,15 +171,18 @@ export class ClaudeAdapter extends BaseAIAdapter {
    * Extract recommendations from Claude response
    */
   protected extractRecommendations(response: any): any[] {
-    if (response.content && Array.isArray(response.content)) {
+    if (response.content && Array.isArray(response.content)) {
+
       const textContent = response.content.find((c: any) => c.type === 'text')?.text;
       if (textContent) {
-        try {
+        try {
+
           const cleanContent = this.cleanJsonResponse(textContent);
           const parsed = JSON.parse(cleanContent);
           return parsed.recommendations || [];
         } catch (parseError) {
-          console.warn('Failed to parse Claude response as JSON:', textContent);
+          console.warn('Failed to parse Claude response as JSON:', textContent);
+
           const jsonMatch = textContent.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             try {
@@ -195,9 +203,12 @@ export class ClaudeAdapter extends BaseAIAdapter {
   /**
    * Clean JSON response from potential formatting issues
    */
-  private cleanJsonResponse(content: string): string {
-    let cleaned = content.replace(/```json\s*|\s*```/g, '');
-    cleaned = cleaned.trim();
+  private cleanJsonResponse(content: string): string {
+
+    let cleaned = content.replace(/```json\s*|\s*```/g, '');
+
+    cleaned = cleaned.trim();
+
     const jsonStart = cleaned.indexOf('{');
     const jsonEnd = cleaned.lastIndexOf('}');
     
@@ -211,7 +222,7 @@ export class ClaudeAdapter extends BaseAIAdapter {
   /**
    * Get Claude-specific information
    */
-  getInfo() {
+  override getInfo() {
     const baseInfo = super.getInfo();
     return {
       ...baseInfo,

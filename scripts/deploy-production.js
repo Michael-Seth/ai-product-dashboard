@@ -17,7 +17,7 @@ function log(message, type = 'info') {
     info: '📋',
     success: '✅',
     warning: '⚠️',
-    error: '❌',
+    error: '',
     build: '🔨'
   }[type] || '📋';
 }
@@ -34,13 +34,16 @@ function runCommand(command, description) {
 }
 
 function checkEnvironment() {
-  log('Checking environment...', 'info');
+  log('Checking environment...', 'info');
+
   if (!fs.existsSync('package.json')) {
     log('package.json not found. Please run from project root.', 'error');
     process.exit(1);
-  }
+  }
+
   const nodeVersion = process.version;
-  log(`Node.js version: ${nodeVersion}`, 'info');
+  log(`Node.js version: ${nodeVersion}`, 'info');
+
   if (!fs.existsSync('node_modules')) {
     log('node_modules not found. Installing dependencies...', 'warning');
     runCommand('npm install', 'Installing dependencies');
@@ -72,11 +75,14 @@ function runTests() {
 }
 
 function buildApplications() {
-  log('Building applications for production...', 'build');
+  log('Building applications for production...', 'build');
+
   runCommand('npx nx build shared-types', 'Building shared types');
-  runCommand('npx nx build shared-api', 'Building shared API');
+  runCommand('npx nx build shared-api', 'Building shared API');
+
   runCommand('npx nx build angular-dashboard --configuration=production', 'Building Angular dashboard');
-  runCommand('npx nx build react-recommender --configuration=production', 'Building React recommender');
+  runCommand('npx nx build react-recommender --configuration=production', 'Building React recommender');
+
   runCommand('npx nx build-web-component react-recommender --configuration=production', 'Building React web component');
   
   log('All builds completed successfully', 'success');
@@ -122,7 +128,8 @@ function generateDeploymentReport() {
     nodeVersion: process.version,
     buildOutputs: [],
     recommendations: []
-  };
+  };
+
   const outputs = [
     { name: 'Angular Dashboard', path: 'dist/angular-dashboard' },
     { name: 'React Recommender', path: 'dist/react-recommender' },
@@ -139,7 +146,8 @@ function generateDeploymentReport() {
         size: getDirSize(output.path)
       });
     }
-  });
+  });
+
   report.recommendations = [
     'Enable gzip/brotli compression on your server',
     'Configure proper cache headers for static assets',
