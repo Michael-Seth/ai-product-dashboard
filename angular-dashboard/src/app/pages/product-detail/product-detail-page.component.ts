@@ -307,7 +307,6 @@ export class ProductDetailPageComponent
 
   private reactElement: HTMLElement | null = null;
 
-  // Modern Angular dependency injection using inject()
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
@@ -329,7 +328,7 @@ export class ProductDetailPageComponent
   }
 
   ngAfterViewInit(): void {
-    // Create web component after view init
+
     setTimeout(() => {
       if (this.webComponentLoaded && this.product && this.reactContainer) {
         this.createWebComponent();
@@ -343,7 +342,6 @@ export class ProductDetailPageComponent
         this.product = product;
         console.log('Product loaded:', product);
 
-        // Update web component if it's ready
         setTimeout(() => {
           if (this.webComponentLoaded) {
             this.updateWebComponentProduct();
@@ -379,14 +377,12 @@ export class ProductDetailPageComponent
       script.onload = () => {
         console.log('React web component JS loaded');
 
-        // Wait for custom element to be registered
         let attempts = 0;
-        const maxAttempts = 100; // 5 seconds max
+        const maxAttempts = 100; 
 
         const checkRegistration = () => {
           attempts++;
 
-          // Debug: Check what's available in customElements
           console.log('Checking customElements registry...');
           console.log('customElements object:', customElements);
 
@@ -402,7 +398,6 @@ export class ProductDetailPageComponent
               this.webComponentLoaded
             );
 
-            // Update web component with product data if available
             setTimeout(() => {
               if (this.product) {
                 this.updateWebComponentProduct();
@@ -415,11 +410,11 @@ export class ProductDetailPageComponent
             setTimeout(checkRegistration, 50);
           } else {
             console.error(
-              '❌ Timeout waiting for react-recommender registration'
+              'Timeout waiting for react-recommender registration'
             );
-            console.error('❌ Final check - customElements:', customElements);
+            console.error('Final check - customElements:', customElements);
             console.error(
-              '❌ Available elements:',
+              'Available elements:',
               Object.getOwnPropertyNames(customElements)
             );
             this.webComponentError = true;
@@ -430,13 +425,13 @@ export class ProductDetailPageComponent
       };
 
       script.onerror = (error) => {
-        console.error('❌ Failed to load React web component JS:', error);
+        console.error('Failed to load React web component JS:', error);
         this.webComponentError = true;
       };
 
       document.head.appendChild(script);
     } catch (error) {
-      console.error('❌ Error loading React web component:', error);
+      console.error('Error loading React web component:', error);
       this.webComponentError = true;
     }
   }
@@ -460,7 +455,7 @@ export class ProductDetailPageComponent
     if (!isNaN(value) && value >= 1 && value <= 99) {
       this.quantity = value;
     } else {
-      // Reset to current valid quantity if invalid input
+
       target.value = this.quantity.toString();
     }
   }
@@ -489,45 +484,40 @@ export class ProductDetailPageComponent
     console.log('Creating web component programmatically');
     console.log('Product to pass:', this.product);
 
-    // Check if custom element is registered
     if (!customElements.get('react-recommender')) {
       console.error(
-        '❌ react-recommender custom element not registered yet, retry:',
+        'react-recommender custom element not registered yet, retry:',
         retryCount
       );
       if (retryCount < 5) {
-        // Retry after a short delay
+
         setTimeout(() => this.createWebComponent(retryCount + 1), 500);
       } else {
         console.error(
-          '❌ Failed to register react-recommender after 5 retries'
+          'Failed to register react-recommender after 5 retries'
         );
       }
       return;
     }
 
-    // Create the element
     try {
       this.reactElement = document.createElement('react-recommender') as any;
       console.log('Element created:', this.reactElement);
     } catch (error) {
-      console.error('❌ Failed to create react-recommender element:', error);
+      console.error('Failed to create react-recommender element:', error);
       if (retryCount < 3) {
         setTimeout(() => this.createWebComponent(retryCount + 1), 1000);
       }
       return;
     }
 
-    // Set the product via property
     console.log('Setting product property...');
     (this.reactElement as any).product = this.product;
     console.log('Product property set');
 
-    // Append to container
     this.reactContainer.nativeElement.appendChild(this.reactElement);
     console.log('Web component appended to DOM');
 
-    // Verify it's in the DOM
     setTimeout(() => {
       console.log('Checking web component in DOM:', {
         isConnected: this.reactElement?.isConnected,

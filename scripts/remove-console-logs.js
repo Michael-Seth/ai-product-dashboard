@@ -331,28 +331,7 @@ class ConsoleLogRemover {
    */
   shouldPreserveConsoleStatement(statement, method) {
     // Always preserve if inside comments
-    if (statement.includes('//') || statement.includes('/*')) {
-      return true;
-    }
-
-    // Always preserve if inside string literals
-    if (this.isInStringLiteral(statement)) {
-      return true;
-    }
-
-    // Check if method should be preserved based on options
-    if (!this.options.removeAll && this.options.preserveErrors) {
-      if (method === 'error' || method === 'warn') {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Check if console statement is inside a string literal
-   */
+    if (statement.includes('//') || statement.includes('
   isInStringLiteral(statement) {
     const consoleIndex = statement.indexOf('console.');
     const beforeConsole = statement.substring(0, consoleIndex);

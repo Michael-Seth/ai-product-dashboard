@@ -52,17 +52,11 @@ function validateEnvironment() {
 
 function deployToVercel() {
   checkVercelCLI();
-  validateEnvironment();
-  
-  // Build the application
-  runCommand('npm run build:prod', 'Building application');
-  
-  // Deploy to Vercel
+  validateEnvironment();
+  runCommand('npm run build:prod', 'Building application');
   const deployCommand = isPreview ? 'vercel' : 'vercel --prod';
   runCommand(deployCommand, `Deploying to Vercel ${isPreview ? '(preview)' : '(production)'}`);
-}
-
-// Run if called directly
+}
 if (require.main === module) {
   deployToVercel();
 }

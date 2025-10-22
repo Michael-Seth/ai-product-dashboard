@@ -26,8 +26,7 @@ async function testWithLogs() {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    // Check if these are AI-generated or mock
+    const data = await response.json();
     const isAI = data.recommendations.some(rec => 
       rec.id.startsWith('openai-') || 
       rec.id.startsWith('grok-') || 

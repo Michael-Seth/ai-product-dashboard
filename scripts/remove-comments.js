@@ -64,8 +64,7 @@ class CommentRemover {
    * Main entry point - removes comments from the entire codebase
    */
   async removeCommentsFromCodebase(rootDir = '.') {
-    if (this.options.dryRun) {
-    }
+
     
     try {
       await this.processDirectory(rootDir);
@@ -76,9 +75,7 @@ class CommentRemover {
     }
   }
 
-  /**
-   * Recursively process directory
-   */
+
   async processDirectory(dirPath) {
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
     
@@ -88,8 +85,7 @@ class CommentRemover {
       if (entry.isDirectory()) {
 
         if (this.excludeDirs.includes(entry.name)) {
-          if (this.options.verbose) {
-          }
+
           continue;
         }
         
@@ -124,8 +120,6 @@ class CommentRemover {
       if (originalContent !== processedContent) {
         this.stats.filesModified++;
         
-        if (this.options.verbose) {
-        }
         
         if (!this.options.dryRun) {
           fs.writeFileSync(filePath, processedContent, 'utf8');
@@ -140,9 +134,6 @@ class CommentRemover {
     }
   }
 
-  /**
-   * Remove comments from file content based on file type
-   */
   removeCommentsFromContent(content, fileExt) {
     switch (fileExt) {
       case '.ts':
@@ -160,9 +151,7 @@ class CommentRemover {
     }
   }
 
-  /**
-   * Remove JavaScript/TypeScript comments
-   */
+
   removeJSComments(content) {
     let result = content;
     let commentsRemoved = 0;
@@ -175,16 +164,14 @@ class CommentRemover {
       commentsRemoved++;
       return '';
     });
-    
-    // Remove multi-line comments ()
-    // But preserve JSDoc comments if option is set
+
+
     result = result.replace(/\/\*[\s\S]*?\*\//g, (match) => {
-      // Preserve JSDoc comments if option is enabled
+
       if (this.options.preserveJSDoc && match.startsWith('/**')) {
         return match;
       }
-      
-      // Preserve license headers
+
       if (match.toLowerCase().includes('license') || 
           match.toLowerCase().includes('copyright') ||
           match.toLowerCase().includes('author')) {
@@ -194,24 +181,20 @@ class CommentRemover {
       commentsRemoved++;
       return '';
     });
-    
-    // Clean up empty lines (but preserve intentional spacing)
+
     result = result.replace(/\n\s*\n\s*\n/g, '\n\n');
     
     this.stats.commentsRemoved += commentsRemoved;
     return result;
   }
 
-  /**
-   * Remove HTML comments
-   */
+
   removeHTMLComments(content) {
     let commentsRemoved = 0;
-    
-    // Remove HTML comments <!-- ... -->
-    // But preserve Angular comments and conditional comments
+
+
     const result = content.replace(/<!--[\s\S]*?-->/g, (match) => {
-      // Preserve Angular-specific comments
+
       if (match.includes('ng-') || 
           match.includes('angular') ||
           match.includes('[if ') ||
@@ -232,10 +215,9 @@ class CommentRemover {
    */
   removeCSSComments(content) {
     let commentsRemoved = 0;
-    
-    // Remove CSS comments 
+
     const result = content.replace(/\/\*[\s\S]*?\*\//g, (match) => {
-      // Preserve license headers
+
       if (match.toLowerCase().includes('license') || 
           match.toLowerCase().includes('copyright')) {
         return match;
@@ -261,18 +243,14 @@ class CommentRemover {
     return (singleQuotes % 2 === 1) || (doubleQuotes % 2 === 1) || (backticks % 2 === 1);
   }
 
-  /**
-   * Print summary of changes
-   */
+
   printSummary() {
     if (this.options.dryRun) {
     } else {
     }
   }
 
-  /**
-   * Show help message
-   */
+
   static showHelp() {
   }
 }

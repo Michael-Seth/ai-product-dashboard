@@ -6,22 +6,15 @@ const app = express();
 const PORT = process.env.PORT || 3005;
 
 app.use(cors());
-app.use(express.json());
-
-// AI Service Integration
+app.use(express.json());
 async function getAIRecommendations(productName) {
-  try {
-    // Try OpenAI first
+  try {
     if (process.env.OPENAI_API_KEY) {
       return await getOpenAIRecommendations(productName);
-    }
-    
-    // Fallback to Grok
+    }
     if (process.env.GROK_API_KEY) {
       return await getGrokRecommendations(productName);
-    }
-    
-    // Fallback to mock if no API keys
+    }
     return getMockRecommendations(productName);
     
   } catch (error) {
@@ -123,8 +116,7 @@ async function getGrokRecommendations(productName) {
   }
 }
 
-function getMockRecommendations(productName) {
-  // Return data in the format expected by the React component: {name, reason, price, image}
+function getMockRecommendations(productName) {
   return [
     {
       name: `${productName} Pro Case`,
@@ -154,9 +146,7 @@ function getMockRecommendations(productName) {
 }
 
 app.post('/api/recommendations', async (req, res) => {
-  const { product, productName } = req.body;
-  
-  // Support both product object and productName string for flexibility
+  const { product, productName } = req.body;
   const name = product?.name || productName;
   
   if (!name || typeof name !== 'string' || name.trim().length === 0) {

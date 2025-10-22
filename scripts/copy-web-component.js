@@ -21,24 +21,19 @@ const FILES_TO_COPY = [
   'react-recommender.js'
 ];
 
-function copyWebComponentFiles() {
-  // Check if source directory exists
+function copyWebComponentFiles() {
   if (!fs.existsSync(SOURCE_DIR)) {
     console.error(`❌ Source directory not found: ${SOURCE_DIR}`);
     console.error('   Please build the web component first:');
     console.error('   npm run build:react-web-component\n');
     process.exit(1);
-  }
-
-  // Ensure target directory exists
+  }
   if (!fs.existsSync(TARGET_DIR)) {
     fs.mkdirSync(TARGET_DIR, { recursive: true });
   }
 
   let copiedFiles = 0;
-  let errors = 0;
-
-  // Copy each file
+  let errors = 0;
   FILES_TO_COPY.forEach(fileName => {
     const sourcePath = path.join(SOURCE_DIR, fileName);
     const targetPath = path.join(TARGET_DIR, fileName);
@@ -61,9 +56,7 @@ function copyWebComponentFiles() {
     process.exit(1);
   } else {
   }
-}
-
-// Run if called directly
+}
 if (require.main === module) {
   copyWebComponentFiles();
 }

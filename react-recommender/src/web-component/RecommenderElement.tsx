@@ -21,9 +21,6 @@ export class RecommenderElement extends HTMLElement {
     console.log('RecommenderElement constructor called');
   }
 
-  /**
-   * Property setter for product (alternative to attribute)
-   */
   set product(value: Product | null) {
     console.log('Product property setter called:', value);
     this._product = value;
@@ -36,19 +33,15 @@ export class RecommenderElement extends HTMLElement {
     return this._product || this.parseProduct();
   }
 
-  /**
-   * Observed attributes that trigger attributeChangedCallback
-   */
+  
   static get observedAttributes() {
     return ['product'];
   }
 
-  /**
-   * Called when the element is added to the DOM
-   */
+ 
   connectedCallback() {
     console.log('RecommenderElement connected to DOM');
-    // Render if we have a product (either from attribute or property)
+
     if (this.hasAttribute('product') || this._product) {
       try {
         this.render();
@@ -61,9 +54,6 @@ export class RecommenderElement extends HTMLElement {
     }
   }
 
-  /**
-   * Called when the element is removed from the DOM
-   */
   disconnectedCallback() {
     if (this.renderTimeout) {
       clearTimeout(this.renderTimeout);
@@ -80,9 +70,6 @@ export class RecommenderElement extends HTMLElement {
     }
   }
 
-  /**
-   * Called when observed attributes change
-   */
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     console.log('attributeChangedCallback called:', { name, oldValue: oldValue?.substring(0, 50), newValue: newValue?.substring(0, 50) });
     
@@ -105,9 +92,6 @@ export class RecommenderElement extends HTMLElement {
     }
   }
 
-  /**
-   * Parse the product attribute from JSON string with validation
-   */
   private parseProduct(): Product | null {
     const productAttr = this.getAttribute('product');
 
@@ -136,9 +120,6 @@ export class RecommenderElement extends HTMLElement {
     }
   }
 
-  /**
-   * Render a simple error fallback directly to the DOM
-   */
   private renderErrorFallback(message: string) {
     this.innerHTML = `
       <div style="
@@ -175,9 +156,6 @@ export class RecommenderElement extends HTMLElement {
     `;
   }
 
-  /**
-   * Render the React component within the Web Component
-   */
   private render() {
     try {
       console.log('Rendering web component...');
@@ -195,7 +173,6 @@ export class RecommenderElement extends HTMLElement {
         this.root = createRoot(container);
       }
 
-      // Use _product property if set, otherwise parse from attribute
       const product = this._product || this.parseProduct();
       console.log('Product for rendering:', product);
       console.log('Product source:', this._product ? 'property' : 'attribute');

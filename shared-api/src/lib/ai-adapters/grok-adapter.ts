@@ -76,8 +76,7 @@ export class GrokAdapter extends BaseAIAdapter {
         }),
         this.createTimeoutPromise(10000)
       ]);
-    } catch (error) {
-      // If the test fails, we'll still consider it initialized
+    } catch (error) {
       console.warn('Grok connection test warning:', error instanceof Error ? error.message : 'Unknown error');
     }
   }

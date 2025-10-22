@@ -19,20 +19,16 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     refetch,
     isFetching,
   } = useGetRecommendationsQuery(product?.name || '', {
-    skip: !product || useMockData, // Skip API call if using mock data
+    skip: !product || useMockData, 
     refetchOnMountOrArgChange: true,
-    refetchOnReconnect: false, // Disable auto-reconnect to prevent loops
+    refetchOnReconnect: false, 
   });
 
-  // No local mock data needed - server handles fallback
 
-  // Determine what data to use
   const hasValidApiData = data?.recommendations && Array.isArray(data.recommendations) && data.recommendations.length > 0;
-  
-  // Use API data (server handles fallback to mock data internally)
+
   const recommendations = hasValidApiData ? data.recommendations : [];
-  
-  // If API fails, switch to mock data permanently for this session
+
   useEffect(() => {
     if (isError && !useMockData) {
       setUseMockData(true);
@@ -40,27 +36,27 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
   }, [isError, useMockData]);
 
   const handleRetry = useCallback(async () => {
-    if (retryCount < 3) { // Limit retries to prevent infinite loops
+    if (retryCount < 3) { 
       setRetryCount(prev => prev + 1);
       setLastError(null);
-      setUseMockData(false); // Try API again
+      setUseMockData(false);
       try {
         await refetch();
       } catch (err) {
         console.error('Retry failed:', err);
         setLastError(err instanceof Error ? err.message : 'Retry failed');
-        setUseMockData(true); // Fall back to mock data
+        setUseMockData(true); 
       }
     } else {
       setLastError('Maximum retry attempts reached. Please refresh the page.');
-      setUseMockData(true); // Use mock data after max retries
+      setUseMockData(true); 
     }
   }, [refetch, retryCount]);
 
   useEffect(() => {
     setRetryCount(0);
     setLastError(null);
-    // Don't reset useMockData here - let it persist unless user manually retries
+
   }, [product?.name]);
 
   if ((isLoading || isFetching) && !useMockData) {
@@ -177,7 +173,6 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     );
   }
 
-  // Enhanced empty state when no product is selected
   if (!product) {
     return (
       <div className="empty-state fade-in">
@@ -197,7 +192,6 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     );
   }
 
-  // Success state with recommendations (already defined above)
   if (recommendations.length === 0) {
     return (
       <div className="empty-state fade-in">
@@ -246,7 +240,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
             className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden group hover:shadow-lg transition-all duration-300 fade-in flex-1 min-w-[250px] max-w-[calc(25%-1.125rem)]"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            {/* Product Image */}
+            {}
             <div className="aspect-square bg-gray-100 overflow-hidden">
               {recommendation.image ? (
                 <img 
@@ -254,7 +248,6 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
                   alt={recommendation.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
-                    // Fallback to placeholder if image fails to load
                     const target = e.target as HTMLImageElement;
                     target.src = 'https://via.placeholder.com/300x300/F3F4F6/9CA3AF?text=Product';
                   }}
@@ -268,7 +261,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
               )}
             </div>
 
-            {/* Product Info */}
+            {}
             <div className="p-4">
               <div className="flex items-start justify-between mb-2">
                 <h4 className="font-semibold text-gray-900 text-sm leading-tight group-hover:text-brand transition-colors duration-200 line-clamp-2">
@@ -285,7 +278,6 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
                 {recommendation.reason}
               </p>
 
-              {/* Action Button */}
               <button className="w-full bg-brand text-white text-sm font-medium py-2 px-4 rounded-lg hover:bg-brand-dark transition-colors duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-200">
                 View Details
               </button>

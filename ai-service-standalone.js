@@ -14,35 +14,28 @@ class StandaloneAIService {
     this.claudeApiKey = process.env.CLAUDE_API_KEY;
   }
 
-  async generateRecommendations(product) {
-    // Try OpenAI first
+  async generateRecommendations(product) {
     if (this.openaiApiKey) {
       try {
         return await this.generateWithOpenAI(product);
       } catch (error) {
         console.warn('⚠️ OpenAI failed:', error.message);
       }
-    }
-    
-    // Try Grok if OpenAI failed or is not available
+    }
     if (this.grokApiKey) {
       try {
         return await this.generateWithGrok(product);
       } catch (error) {
         console.warn('⚠️ Grok failed:', error.message);
       }
-    }
-    
-    // Try Claude if others failed or are not available
+    }
     if (this.claudeApiKey) {
       try {
         return await this.generateWithClaude(product);
       } catch (error) {
         console.warn('⚠️ Claude failed:', error.message);
       }
-    }
-    
-    // If all AI providers fail, use fallback
+    }
     return this.generateFallbackRecommendations(product);
   }
 

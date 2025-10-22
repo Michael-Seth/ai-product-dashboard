@@ -1,5 +1,4 @@
-// Simple test entry point
-// Test customElements
+
 if (typeof customElements !== 'undefined') {
 } else {
 }

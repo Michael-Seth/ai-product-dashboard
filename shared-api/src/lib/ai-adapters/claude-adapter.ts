@@ -195,14 +195,9 @@ export class ClaudeAdapter extends BaseAIAdapter {
   /**
    * Clean JSON response from potential formatting issues
    */
-  private cleanJsonResponse(content: string): string {
-    // Remove markdown code blocks if present
-    let cleaned = content.replace(/```json\s*|\s*```/g, '');
-    
-    // Remove any leading/trailing whitespace
-    cleaned = cleaned.trim();
-    
-    // If the response starts with text before JSON, try to extract just the JSON
+  private cleanJsonResponse(content: string): string {
+    let cleaned = content.replace(/```json\s*|\s*```/g, '');
+    cleaned = cleaned.trim();
     const jsonStart = cleaned.indexOf('{');
     const jsonEnd = cleaned.lastIndexOf('}');
     
