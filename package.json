@@ -65,6 +65,8 @@
     "tslib": "^2.3.0",
     "express": "^4.21.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^2.7.0",
     "@nx/eslint-plugin": "21.6.5",
     "@nx/jest": "21.6.5",
     "glob": "10.4.5"
