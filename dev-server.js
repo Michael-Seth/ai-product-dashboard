@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3005;
 
 app.use(cors());
 app.use(express.json());
@@ -13,23 +13,19 @@ async function getAIRecommendations(productName) {
   try {
     // Try OpenAI first
     if (process.env.OPENAI_API_KEY) {
-      console.log(`🤖 Using OpenAI to generate recommendations for: ${productName}`);
       return await getOpenAIRecommendations(productName);
     }
     
     // Fallback to Grok
     if (process.env.GROK_API_KEY) {
-      console.log(`🤖 Using Grok to generate recommendations for: ${productName}`);
       return await getGrokRecommendations(productName);
     }
     
     // Fallback to mock if no API keys
-    console.log(`⚠️ No AI API keys found, using mock recommendations for: ${productName}`);
     return getMockRecommendations(productName);
     
   } catch (error) {
     console.error('❌ AI API Error:', error.message);
-    console.log(`🔄 Falling back to mock recommendations for: ${productName}`);
     return getMockRecommendations(productName);
   }
 }
@@ -44,11 +40,9 @@ async function getOpenAIRecommendations(productName) {
   const prompt = `Generate 3 product recommendations for someone who is interested in "${productName}". 
   
   Return a JSON array with objects containing:
-  - id: unique identifier (string)
   - name: product name (string)
-  - description: brief description (string)
+  - reason: brief explanation why this is recommended (string)
   - price: estimated price in USD (number)
-  - confidence: confidence score 0-1 (number)
   
   Focus on accessories, complementary products, or upgrades that would genuinely interest someone buying "${productName}".
   Make the recommendations realistic and relevant.`;
@@ -65,13 +59,11 @@ async function getOpenAIRecommendations(productName) {
   try {
     const recommendations = JSON.parse(content);
     const formattedRecs = (Array.isArray(recommendations) ? recommendations : recommendations.recommendations || [])
-      .map((rec, index) => ({
-        id: rec.id || `openai-${index + 1}`,
+      .map((rec) => ({
         name: rec.name || 'AI Recommended Product',
-        description: rec.description || rec.reason || 'AI generated recommendation',
-        price: rec.price || 99,
-        imageUrl: rec.imageUrl || 'https://via.placeholder.com/300x200',
-        confidence: rec.confidence || 0.8
+        reason: rec.reason || rec.description || 'AI generated recommendation',
+        price: rec.price || 99.99,
+        image: 'https://via.placeholder.com/300x200/6366F1/FFFFFF?text=AI+Recommendation'
       }));
     
     return formattedRecs;
@@ -87,11 +79,9 @@ async function getGrokRecommendations(productName) {
   const prompt = `Generate 3 product recommendations for someone interested in "${productName}". 
   
   Return a JSON array with objects containing:
-  - id: unique identifier (string)
-  - name: product name (string)  
-  - description: brief description (string)
+  - name: product name (string)
+  - reason: brief explanation why this is recommended (string)
   - price: estimated price in USD (number)
-  - confidence: confidence score 0-1 (number)
   
   Make the recommendations realistic and relevant.`;
 
@@ -119,13 +109,11 @@ async function getGrokRecommendations(productName) {
   try {
     const recommendations = JSON.parse(content);
     const formattedRecs = (Array.isArray(recommendations) ? recommendations : recommendations.recommendations || [])
-      .map((rec, index) => ({
-        id: rec.id || `grok-${index + 1}`,
+      .map((rec) => ({
         name: rec.name || 'AI Recommended Product',
-        description: rec.description || rec.reason || 'AI generated recommendation',
-        price: rec.price || 99,
-        imageUrl: rec.imageUrl || 'https://via.placeholder.com/300x200',
-        confidence: rec.confidence || 0.8
+        reason: rec.reason || rec.description || 'AI generated recommendation',
+        price: rec.price || 99.99,
+        image: 'https://via.placeholder.com/300x200/8B5CF6/FFFFFF?text=AI+Recommendation'
       }));
     
     return formattedRecs;
@@ -136,38 +124,31 @@ async function getGrokRecommendations(productName) {
 }
 
 function getMockRecommendations(productName) {
+  // Return data in the format expected by the React component: {name, reason, price, image}
   return [
     {
-      id: 'mock-1',
       name: `${productName} Pro Case`,
-      description: `Perfect protection for your ${productName} with premium materials`,
-      price: 49,
-      imageUrl: 'https://via.placeholder.com/300x200',
-      confidence: 0.85
+      reason: `Perfect protection for your ${productName} with premium materials`,
+      price: 49.99,
+      image: 'https://imosiso.com/cdn/shop/files/28black1@2x.jpg?v=1740801503'
     },
     {
-      id: 'mock-2',
       name: `${productName} Wireless Mouse`,
-      description: `Ergonomic wireless mouse designed to complement your ${productName}`,
-      price: 79,
-      imageUrl: 'https://via.placeholder.com/300x200',
-      confidence: 0.78
+      reason: `Ergonomic wireless mouse designed to complement your ${productName}`,
+      price: 79.99,
+      image: 'https://m.media-amazon.com/images/I/51KmxQjXBlL.jpg'
     },
     {
-      id: 'mock-3',
       name: `${productName} External Monitor`,
-      description: `Expand your workspace with a high-resolution display for ${productName}`,
-      price: 299,
-      imageUrl: 'https://via.placeholder.com/300x200',
-      confidence: 0.72
+      reason: `Expand your workspace with a high-resolution display for ${productName}`,
+      price: 299.99,
+      image: 'https://www-konga-com-res.cloudinary.com/f_auto,fl_lossy,dpr_auto,q_auto/media/catalog/product/W/F/69398_1714747540.jpg'
     },
     {
-      id: 'mock-4',
       name: `${productName} Charging Dock`,
-      description: `Keep your ${productName} charged and organized with this sleek dock`,
-      price: 89,
-      imageUrl: 'https://via.placeholder.com/300x200',
-      confidence: 0.68
+      reason: `Keep your ${productName} charged and organized with this sleek dock`,
+      price: 89.99,
+      image: 'https://www.betterlivingthroughdesign.com/images/Alldock-2.jpg'
     }
   ];
 }
@@ -186,10 +167,7 @@ app.post('/api/recommendations', async (req, res) => {
   }
 
   try {
-    console.log(`📝 Generating recommendations for: ${name}`);
     const recommendations = await getAIRecommendations(name.trim());
-    
-    console.log(`✅ Generated ${recommendations.length} recommendations`);
     res.json({ recommendations });
     
   } catch (error) {

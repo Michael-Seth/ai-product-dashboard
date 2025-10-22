@@ -199,16 +199,6 @@ class AIProviderTester {
    * Show help message
    */
   static showHelp() {
-    console.log(`
-🤖 AI Provider Testing Script for AI E-commerce Platform
-
-Test AI providers and their recommendation capabilities.
-
-Usage:
-  node scripts/test-ai-providers.js [options]
-
-Options:
-  --provider <name>  Test specific provider (openai, grok, claude)
   --verbose          Show detailed output including sample recommendations
   --help             Show this help message
 

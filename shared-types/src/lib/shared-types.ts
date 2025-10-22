@@ -21,6 +21,8 @@ export interface Product {
 export interface Recommendation {
   name: string;
   reason: string;
+  price?: number;
+  image?: string;
 }
 
 /**

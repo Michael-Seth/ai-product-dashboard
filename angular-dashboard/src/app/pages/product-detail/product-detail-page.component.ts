@@ -304,7 +304,7 @@ export class ProductDetailPageComponent
 
   @ViewChild('reactContainer', { static: false })
   reactContainer!: ElementRef;
-  
+
   private reactElement: HTMLElement | null = null;
 
   // Modern Angular dependency injection using inject()
@@ -341,7 +341,7 @@ export class ProductDetailPageComponent
     this.productService.getProductById(id).subscribe({
       next: (product) => {
         this.product = product;
-        console.log('✅ Product loaded:', product);
+        console.log('Product loaded:', product);
 
         // Update web component if it's ready
         setTimeout(() => {
@@ -359,13 +359,13 @@ export class ProductDetailPageComponent
 
   async loadReactWebComponent(): Promise<void> {
     try {
-      console.log('🔄 Loading React web component...');
+      console.log('Loading React web component...');
 
       const cssLink = document.createElement('link');
       cssLink.rel = 'stylesheet';
       cssLink.href = '/react-recommender.css';
       cssLink.onload = () => {
-        console.log('✅ React web component CSS loaded');
+        console.log('React web component CSS loaded');
       };
       cssLink.onerror = () => {
         console.warn('⚠️ React web component CSS not found');
@@ -377,7 +377,7 @@ export class ProductDetailPageComponent
       script.async = true;
 
       script.onload = () => {
-        console.log('✅ React web component JS loaded');
+        console.log('React web component JS loaded');
 
         // Wait for custom element to be registered
         let attempts = 0;
@@ -387,17 +387,18 @@ export class ProductDetailPageComponent
           attempts++;
 
           // Debug: Check what's available in customElements
-          console.log('🔍 Checking customElements registry...');
-          console.log('🔍 customElements object:', customElements);
-          
-          const reactRecommenderElement = customElements.get('react-recommender');
-          console.log('🔍 react-recommender element:', reactRecommenderElement);
-          
+          console.log('Checking customElements registry...');
+          console.log('customElements object:', customElements);
+
+          const reactRecommenderElement =
+            customElements.get('react-recommender');
+          console.log('react-recommender element:', reactRecommenderElement);
+
           if (reactRecommenderElement) {
-            console.log('✅ react-recommender custom element registered');
+            console.log('react-recommender custom element registered');
             this.webComponentLoaded = true;
             console.log(
-              '🎯 Web component loaded state:',
+            '🎯 Web component loaded state:',
               this.webComponentLoaded
             );
 
@@ -409,7 +410,7 @@ export class ProductDetailPageComponent
             }, 100);
           } else if (attempts < maxAttempts) {
             console.log(
-              `⏳ Waiting for react-recommender registration... (${attempts}/${maxAttempts})`
+            `⏳ Waiting for react-recommender registration... (${attempts}/${maxAttempts})`
             );
             setTimeout(checkRegistration, 50);
           } else {
@@ -417,7 +418,10 @@ export class ProductDetailPageComponent
               '❌ Timeout waiting for react-recommender registration'
             );
             console.error('❌ Final check - customElements:', customElements);
-            console.error('❌ Available elements:', Object.getOwnPropertyNames(customElements));
+            console.error(
+              '❌ Available elements:',
+              Object.getOwnPropertyNames(customElements)
+            );
             this.webComponentError = true;
           }
         };
@@ -469,48 +473,73 @@ export class ProductDetailPageComponent
 
   get productJson(): string {
     const json = this.product ? JSON.stringify(this.product) : '';
-    console.log('📦 Product JSON being passed to React component:', json);
+    console.log('Product JSON being passed to React component:', json);
     return json;
   }
 
-  private createWebComponent(): void {
+  private createWebComponent(retryCount = 0): void {
     if (!this.reactContainer || !this.product) {
-      console.log('❌ Cannot create web component:', { 
-        hasContainer: !!this.reactContainer, 
-        hasProduct: !!this.product 
+      console.log('Cannot create web component:', {
+        hasContainer: !!this.reactContainer,
+        hasProduct: !!this.product,
       });
       return;
     }
 
-    console.log('🏗️ Creating web component programmatically');
-    console.log('📦 Product to pass:', this.product);
-    
+    console.log('Creating web component programmatically');
+    console.log('Product to pass:', this.product);
+
+    // Check if custom element is registered
+    if (!customElements.get('react-recommender')) {
+      console.error(
+        '❌ react-recommender custom element not registered yet, retry:',
+        retryCount
+      );
+      if (retryCount < 5) {
+        // Retry after a short delay
+        setTimeout(() => this.createWebComponent(retryCount + 1), 500);
+      } else {
+        console.error(
+          '❌ Failed to register react-recommender after 5 retries'
+        );
+      }
+      return;
+    }
+
     // Create the element
-    this.reactElement = document.createElement('react-recommender') as any;
-    console.log('✅ Element created:', this.reactElement);
-    
+    try {
+      this.reactElement = document.createElement('react-recommender') as any;
+      console.log('Element created:', this.reactElement);
+    } catch (error) {
+      console.error('❌ Failed to create react-recommender element:', error);
+      if (retryCount < 3) {
+        setTimeout(() => this.createWebComponent(retryCount + 1), 1000);
+      }
+      return;
+    }
+
     // Set the product via property
-    console.log('📝 Setting product property...');
+    console.log('Setting product property...');
     (this.reactElement as any).product = this.product;
-    console.log('✅ Product property set');
-    
+    console.log('Product property set');
+
     // Append to container
     this.reactContainer.nativeElement.appendChild(this.reactElement);
-    console.log('✅ Web component appended to DOM');
-    
+    console.log('Web component appended to DOM');
+
     // Verify it's in the DOM
     setTimeout(() => {
-      console.log('🔍 Checking web component in DOM:', {
+      console.log('Checking web component in DOM:', {
         isConnected: this.reactElement?.isConnected,
         hasChildren: this.reactElement?.children.length,
-        innerHTML: this.reactElement?.innerHTML.substring(0, 100)
+        innerHTML: this.reactElement?.innerHTML.substring(0, 100),
       });
     }, 500);
   }
 
   private updateWebComponentProduct(): void {
     if (this.reactElement && this.product) {
-      console.log('🔄 Updating product on web component');
+      console.log('Updating product on web component');
       (this.reactElement as any).product = this.product;
     } else if (this.webComponentLoaded && this.product && this.reactContainer) {
       this.createWebComponent();

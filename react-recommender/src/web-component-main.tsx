@@ -7,21 +7,23 @@ import { RecommenderElement } from './web-component/RecommenderElement';
 import './styles.css';
 
 // Register the custom element directly when the script loads
-console.log('🚀 Registering react-recommender web component...');
-
 try {
   if (typeof customElements !== 'undefined') {
-    if (!customElements.get('react-recommender')) {
+    const existingElement = customElements.get('react-recommender');
+    if (!existingElement) {
       customElements.define('react-recommender', RecommenderElement);
-      console.log('✅ react-recommender web component registered successfully');
+      // Verify registration
+      const verifyElement = customElements.get('react-recommender');
     } else {
-      console.log('⚠️ react-recommender already registered');
     }
   } else {
     console.error('❌ customElements API not available');
   }
 } catch (error) {
   console.error('❌ Failed to register react-recommender:', error);
+  if (error instanceof Error) {
+    console.error('❌ Error details:', error.message, error.stack);
+  }
 }
 
 // Export the element class for manual registration if needed
@@ -29,5 +31,4 @@ export { RecommenderElement };
 
 // Export a registration function as default
 export default function() {
-  console.log('Manual registration function called');
 };

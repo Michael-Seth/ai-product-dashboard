@@ -114,20 +114,11 @@ class ConsoleLogRemover {
    * Main entry point - removes console statements from the entire codebase
    */
   async removeConsoleLogsFromCodebase(rootDir = '.') {
-    console.log(' Starting console.log removal process...\n');
-
     if (this.options.dryRun) {
-      console.log(' DRY RUN MODE - No files will be modified\n');
     }
 
     if (this.options.removeAll) {
-      console.log(
-        '️ REMOVE ALL MODE - All console statements will be removed\n'
-      );
     } else if (this.options.preserveErrors) {
-      console.log(
-        '️ PRESERVE MODE - console.error and console.warn will be preserved\n'
-      );
     }
 
     try {
@@ -151,7 +142,6 @@ class ConsoleLogRemover {
       if (entry.isDirectory()) {
         if (this.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
-            console.log(`⏭️ Skipping directory: ${fullPath}`);
           }
           continue;
         }
@@ -188,7 +178,6 @@ class ConsoleLogRemover {
         this.stats.filesModified++;
 
         if (this.options.verbose) {
-          console.log(` Processing: ${filePath}`);
         }
 
         if (!this.options.dryRun) {
@@ -382,60 +371,20 @@ class ConsoleLogRemover {
    * Print summary of changes
    */
   printSummary() {
-    console.log('\n Console.log Removal Summary:');
-    console.log('═'.repeat(45));
-    console.log(` Files processed: ${this.stats.filesProcessed}`);
-    console.log(`️ Files modified: ${this.stats.filesModified}`);
-    console.log(
-      `️ Console statements removed: ${this.stats.consoleStatementsRemoved}`
-    );
-    console.log(` Lines removed: ${this.stats.linesRemoved}`);
-
-    console.log('\n Breakdown by console method:');
     for (const [method, count] of Object.entries(this.stats.byType)) {
       if (count > 0) {
-        console.log(` ${method}: ${count} removed`);
       }
     }
 
     if (this.options.dryRun) {
-      console.log('\n This was a dry run - no files were actually modified');
-      console.log(' Run without --dry-run to apply changes');
     } else {
-      console.log('\n Console.log removal completed successfully!');
     }
-
-    console.log('\n Tips:');
-    console.log(' • Run your tests after removal to ensure functionality');
-    console.log(' • Consider using a proper logging library for production');
-    console.log(' • Use --preserve to keep console.error and console.warn');
   }
 
   /**
    * Show help message
    */
   static showHelp() {
-    console.log(`
-🚀 Console.log Removal Script for AI E-commerce Platform
-
-This script removes console.log, console.debug, console.info, and other console statements
-from TypeScript and JavaScript files while optionally preserving error logging.
-
-Usage:
-  node scripts/remove-console-logs.js [options]
-
-Options:
-  --dry-run    Show what would be changed without modifying files
-  --preserve   Preserve console.error and console.warn statements [default: true]
-  --all        Remove ALL console statements including error/warn
-  --verbose    Show detailed output for each file processed
-  --help       Show this help message
-
-Examples:
-  # Dry run to see what would be changed
-  node scripts/remove-console-logs.js --dry-run
-
-  # Remove console.log but keep console.error/warn (default)
   node scripts/remove-console-logs.js --preserve
 
   # Remove ALL console statements

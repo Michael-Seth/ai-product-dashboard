@@ -16,10 +16,8 @@ const path = require('path');
 const isPreview = process.argv.includes('--preview');
 
 function runCommand(command, description) {
-  console.log(`\n🔄 ${description}...`);
   try {
     execSync(command, { stdio: 'inherit' });
-    console.log(`✅ ${description} completed`);
   } catch (error) {
     console.error(`❌ ${description} failed:`, error.message);
     process.exit(1);
@@ -29,7 +27,6 @@ function runCommand(command, description) {
 function checkVercelCLI() {
   try {
     execSync('vercel --version', { stdio: 'pipe' });
-    console.log('✅ Vercel CLI is installed');
   } catch (error) {
     console.error('❌ Vercel CLI not found. Please install it:');
     console.error('   npm install -g vercel');
@@ -38,8 +35,6 @@ function checkVercelCLI() {
 }
 
 function validateEnvironment() {
-  console.log('\n🔍 Validating environment...');
-  
   const requiredFiles = [
     'vercel.json',
     'package.json',
@@ -53,13 +48,9 @@ function validateEnvironment() {
       process.exit(1);
     }
   }
-
-  console.log('✅ All required files present');
 }
 
 function deployToVercel() {
-  console.log('\n🚀 Starting Vercel deployment...\n');
-  
   checkVercelCLI();
   validateEnvironment();
   
@@ -69,12 +60,6 @@ function deployToVercel() {
   // Deploy to Vercel
   const deployCommand = isPreview ? 'vercel' : 'vercel --prod';
   runCommand(deployCommand, `Deploying to Vercel ${isPreview ? '(preview)' : '(production)'}`);
-  
-  console.log('\n🎉 Deployment completed successfully!');
-  console.log('\n💡 Next steps:');
-  console.log('   1. Set up environment variables in Vercel dashboard');
-  console.log('   2. Configure custom domain (if needed)');
-  console.log('   3. Test the deployed application');
 }
 
 // Run if called directly

@@ -64,10 +64,7 @@ class CommentRemover {
    * Main entry point - removes comments from the entire codebase
    */
   async removeCommentsFromCodebase(rootDir = '.') {
-    console.log('🧹 Starting comment removal process...\n');
-    
     if (this.options.dryRun) {
-      console.log('🔍 DRY RUN MODE - No files will be modified\n');
     }
     
     try {
@@ -92,7 +89,6 @@ class CommentRemover {
 
         if (this.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
-            console.log(`⏭️  Skipping directory: ${fullPath}`);
           }
           continue;
         }
@@ -129,7 +125,6 @@ class CommentRemover {
         this.stats.filesModified++;
         
         if (this.options.verbose) {
-          console.log(`📝 Processing: ${filePath}`);
         }
         
         if (!this.options.dryRun) {
@@ -171,7 +166,6 @@ class CommentRemover {
   removeJSComments(content) {
     let result = content;
     let commentsRemoved = 0;
-
 
     result = result.replace(/^(\s*)\/\/(?!\s*@|\s*eslint|\s*prettier|\s*webpack|\s*vite).*$/gm, (match, indent) => {
 
@@ -271,79 +265,15 @@ class CommentRemover {
    * Print summary of changes
    */
   printSummary() {
-    console.log('\n📊 Comment Removal Summary:');
-    console.log('═'.repeat(40));
-    console.log(`📁 Files processed: ${this.stats.filesProcessed}`);
-    console.log(`✏️  Files modified: ${this.stats.filesModified}`);
-    console.log(`💬 Comments removed: ${this.stats.commentsRemoved}`);
-    console.log(`📄 Lines removed: ${this.stats.linesRemoved}`);
-    
     if (this.options.dryRun) {
-      console.log('\n🔍 This was a dry run - no files were actually modified');
-      console.log('   Run without --dry-run to apply changes');
     } else {
-      console.log('\n✅ Comment removal completed successfully!');
     }
-    
-    console.log('\n💡 Tip: Run your linter/formatter after comment removal to clean up formatting');
   }
 
   /**
    * Show help message
    */
   static showHelp() {
-    console.log(`
-🧹 Comment Removal Script for AI E-commerce Platform
-
-This script removes comments from TypeScript, JavaScript, HTML, CSS, and SCSS files
-while preserving important documentation like license headers and JSDoc comments.
-
-Usage:
-  node scripts/remove-comments.js [options]
-
-Options:
-  --dry-run     Show what would be changed without modifying files
-  --preserve    Preserve JSDoc comments (/** ... */) [default: true]
-  --no-preserve Don't preserve JSDoc comments
-  --verbose     Show detailed output for each file processed
-  --help        Show this help message
-
-Examples:
-  # Dry run to see what would be changed
-  node scripts/remove-comments.js --dry-run
-
-  # Remove comments but preserve JSDoc
-  node scripts/remove-comments.js --preserve
-
-  # Remove all comments including JSDoc
-  node scripts/remove-comments.js --no-preserve
-
-  # Verbose output with dry run
-  node scripts/remove-comments.js --dry-run --verbose
-
-Files processed:
-  ✅ TypeScript (.ts, .tsx)
-  ✅ JavaScript (.js, .jsx)  
-  ✅ HTML (.html)
-  ✅ CSS (.css)
-  ✅ SCSS (.scss)
-
-Preserved comments:
-  ✅ License headers
-  ✅ Copyright notices
-  ✅ JSDoc comments (if --preserve is used)
-  ✅ Angular-specific HTML comments
-  ✅ Conditional comments
-
-Excluded directories:
-  ❌ node_modules, dist, coverage, .git, .nx, .angular, tmp, build
-
-Safety features:
-  🔒 Dry run mode to preview changes
-  🔒 Preserves important legal and documentation comments
-  🔒 Skips binary and configuration files
-  🔒 Detailed logging and statistics
-`);
   }
 }
 

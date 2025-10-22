@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
-import { RecommendationResponse, APIError, isAPIError } from '@ai-product-dashboard/shared-types';
+import { RecommendationResponse, APIError, isAPIError } from '@ai-product-dashboard/shared-types';
+
 const baseQueryWithRetry: BaseQueryFn<
   string | FetchArgs,
   unknown,
@@ -10,27 +11,33 @@ const baseQueryWithRetry: BaseQueryFn<
     timeout: 15000, // 15 second timeout
   });
 
-  let result = await baseQuery(args, api, extraOptions);
+  let result = await baseQuery(args, api, extraOptions);
+
   if (result.error && result.error.status === 'FETCH_ERROR') {
-    console.warn('Network error detected, retrying request...');
+    console.warn('Network error detected, retrying request...');
+
     await new Promise(resolve => setTimeout(resolve, 1000));
     result = await baseQuery(args, api, extraOptions);
-  }
+  }
+
   if (result.error && typeof result.error.status === 'number' && result.error.status >= 500) {
-    console.warn(`Server error ${result.error.status} detected, retrying request...`);
+    console.warn(`Server error ${result.error.status} detected, retrying request...`);
+
     await new Promise(resolve => setTimeout(resolve, 2000));
     result = await baseQuery(args, api, extraOptions);
   }
 
   return result;
-};
+};
+
 export const recommendationApi = createApi({
   reducerPath: 'recommendationApi',
   baseQuery: baseQueryWithRetry,
   tagTypes: ['Recommendation'],
   endpoints: (builder) => ({
     getRecommendations: builder.query<RecommendationResponse, string>({
-      query: (productName) => {
+      query: (productName) => {
+
         if (!productName || typeof productName !== 'string' || productName.trim().length === 0) {
           throw new Error('Product name is required and must be a non-empty string');
         }
@@ -45,18 +52,22 @@ export const recommendationApi = createApi({
         };
       },
       providesTags: ['Recommendation'],
-      transformResponse: (response: unknown): RecommendationResponse => {
+      transformResponse: (response: unknown): RecommendationResponse => {
+
         if (!response || typeof response !== 'object') {
           throw new Error('Invalid response format');
-        }
+        }
+
         if (isAPIError(response)) {
           throw new Error(response.message || response.error);
         }
 
-        const typedResponse = response as RecommendationResponse;
+        const typedResponse = response as RecommendationResponse;
+
         if (!typedResponse.recommendations || !Array.isArray(typedResponse.recommendations)) {
           throw new Error('Invalid recommendations format');
-        }
+        }
+
         const validRecommendations = typedResponse.recommendations.filter(rec => 
           rec && 
           typeof rec === 'object' && 
@@ -67,6 +78,7 @@ export const recommendationApi = createApi({
         );
 
         if (validRecommendations.length === 0) {
+          console.warn('No valid recommendations received from API, will use fallback');
           throw new Error('No valid recommendations received');
         }
 
@@ -75,7 +87,8 @@ export const recommendationApi = createApi({
         };
       },
       transformErrorResponse: (response: FetchBaseQueryError): string => {
-        console.error('API Error:', response);
+        console.error('API Error:', response);
+
         if (response.status === 'FETCH_ERROR') {
           return 'Network connection failed. Please check your internet connection and try again.';
         }
@@ -109,11 +122,14 @@ export const recommendationApi = createApi({
             default:
               return `Unexpected error (${response.status}). Please try again.`;
           }
-        }
+        }
+
         return 'An unexpected error occurred. Please try again.';
-      },
+      },
+
       keepUnusedDataFor: 300,
     }),
   }),
-});
+});
+
 export const { useGetRecommendationsQuery } = recommendationApi;

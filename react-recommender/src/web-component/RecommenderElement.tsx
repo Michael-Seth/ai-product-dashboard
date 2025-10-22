@@ -18,17 +18,14 @@ export class RecommenderElement extends HTMLElement {
 
   constructor() {
     super();
-    console.log('🏗️ RecommenderElement constructor called');
-
-    this.style.display = 'block';
-    this.style.width = '100%';
+    console.log('RecommenderElement constructor called');
   }
 
   /**
    * Property setter for product (alternative to attribute)
    */
   set product(value: Product | null) {
-    console.log('📝 Product property setter called:', value);
+    console.log('Product property setter called:', value);
     this._product = value;
     if (this.isConnected) {
       this.render();
@@ -50,17 +47,17 @@ export class RecommenderElement extends HTMLElement {
    * Called when the element is added to the DOM
    */
   connectedCallback() {
-    console.log('🔌 RecommenderElement connected to DOM');
-    // Only render if we have a product attribute
-    if (this.hasAttribute('product')) {
+    console.log('RecommenderElement connected to DOM');
+    // Render if we have a product (either from attribute or property)
+    if (this.hasAttribute('product') || this._product) {
       try {
         this.render();
       } catch (error) {
-        console.error('Error in connectedCallback:', error);
+        console.error('ror in connectedCallback:', error);
         this.renderErrorFallback('Failed to initialize recommendation widget');
       }
     } else {
-      console.log('⏳ Waiting for product attribute...');
+      console.log('Waiting for product...');
     }
   }
 
@@ -79,7 +76,7 @@ export class RecommenderElement extends HTMLElement {
         this.root = null;
       }
     } catch (error) {
-      console.error('Error during cleanup:', error);
+      console.error('ror during cleanup:', error);
     }
   }
 
@@ -87,10 +84,10 @@ export class RecommenderElement extends HTMLElement {
    * Called when observed attributes change
    */
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    console.log('🔄 attributeChangedCallback called:', { name, oldValue: oldValue?.substring(0, 50), newValue: newValue?.substring(0, 50) });
+    console.log('attributeChangedCallback called:', { name, oldValue: oldValue?.substring(0, 50), newValue: newValue?.substring(0, 50) });
     
     if (name === 'product' && oldValue !== newValue) {
-      console.log('✅ Product attribute changed, scheduling render...');
+      console.log('Product attribute changed, scheduling render...');
 
       if (this.renderTimeout) {
         clearTimeout(this.renderTimeout);
@@ -98,10 +95,10 @@ export class RecommenderElement extends HTMLElement {
 
       this.renderTimeout = setTimeout(() => {
         try {
-          console.log('🎨 Calling render from attributeChangedCallback...');
+          console.log('Calling render from attributeChangedCallback...');
           this.render();
         } catch (error) {
-          console.error('❌ Error in attributeChangedCallback:', error);
+          console.error('Error in attributeChangedCallback:', error);
           this.renderErrorFallback('Failed to update recommendations');
         }
       }, 100);
@@ -114,27 +111,27 @@ export class RecommenderElement extends HTMLElement {
   private parseProduct(): Product | null {
     const productAttr = this.getAttribute('product');
 
-    console.log('🔍 Parsing product attribute:', productAttr);
+    console.log('Parsing product attribute:', productAttr);
 
     if (!productAttr) {
-      console.log('❌ No product attribute found');
+      console.log('No product attribute found');
       return null;
     }
 
     try {
       const parsed = JSON.parse(productAttr);
-      console.log('✅ Successfully parsed product:', parsed);
+      console.log('Successfully parsed product:', parsed);
 
       if (!parsed || typeof parsed !== 'object') {
-        throw new Error('Product must be an object');
+        throw new Error('oduct must be an object');
       }
 
       if (!parsed.name || typeof parsed.name !== 'string') {
-        throw new Error('Product must have a valid name');
+        throw new Error('oduct must have a valid name');
       }
       return parsed as Product;
     } catch (error) {
-      console.error('❌ Failed to parse product attribute:', error, 'Raw value:', productAttr);
+      console.error('Failed to parse product attribute:', error, 'Raw value:', productAttr);
       return null;
     }
   }
@@ -183,10 +180,10 @@ export class RecommenderElement extends HTMLElement {
    */
   private render() {
     try {
-      console.log('🎨 Rendering web component...');
+      console.log('Rendering web component...');
 
       if (!this.root) {
-        console.log('🏗️ Creating new React root...');
+        console.log('Creating new React root...');
 
         this.innerHTML = '';
 
@@ -200,8 +197,8 @@ export class RecommenderElement extends HTMLElement {
 
       // Use _product property if set, otherwise parse from attribute
       const product = this._product || this.parseProduct();
-      console.log('📦 Product for rendering:', product);
-      console.log('📦 Product source:', this._product ? 'property' : 'attribute');
+      console.log('Product for rendering:', product);
+      console.log('Product source:', this._product ? 'property' : 'attribute');
 
       const errorFallback = (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
@@ -220,21 +217,25 @@ export class RecommenderElement extends HTMLElement {
         </div>
       );
 
-      console.log('🚀 Rendering React component with product:', product);
+      console.log('Rendering React component with product:', product);
       this.root.render(
-        <ErrorBoundary fallback={errorFallback}>
+        <ErrorBoundary>
           <Provider store={this.store}>
-            <ErrorBoundary fallback={errorFallback}>
-              <div className="w-full h-full">
+            <div className="w-full">
+              {product ? (
                 <Recommender product={product} />
-              </div>
-            </ErrorBoundary>
+              ) : (
+                <div className="p-4 text-center text-gray-500">
+                  <p>Loading recommendations...</p>
+                </div>
+              )}
+            </div>
           </Provider>
         </ErrorBoundary>
       );
-      console.log('✅ React component rendered successfully');
+      console.log('React component rendered successfully');
     } catch (error) {
-      console.error('❌ Critical error in render method:', error);
+      console.error('Critical error in render method:', error);
       this.renderErrorFallback('Critical rendering error occurred');
     }
   }

@@ -5,8 +5,6 @@
  */
 
 async function testAPI() {
-  console.log('🧪 Testing /api/recommendations endpoint...');
-  
   const testProduct = {
     id: '1',
     name: 'MacBook Air M2',
@@ -30,20 +28,8 @@ async function testAPI() {
     }
 
     const data = await response.json();
-    
-    console.log('✅ API Response received!');
-    console.log('📊 Recommendations:', data.recommendations.length);
-    
     data.recommendations.forEach((rec, index) => {
-      console.log(`\n${index + 1}. ${rec.name}`);
-      console.log(`   ID: ${rec.id}`);
-      console.log(`   Price: $${rec.price}`);
-      console.log(`   Confidence: ${(rec.confidence * 100).toFixed(1)}%`);
-      console.log(`   Description: ${rec.description}`);
     });
-    
-    console.log('\n🎉 API endpoint is working!');
-    
   } catch (error) {
     console.error('❌ Test failed:', error.message);
   }

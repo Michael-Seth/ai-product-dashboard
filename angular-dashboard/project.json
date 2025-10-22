@@ -18,6 +18,11 @@
           {
             "glob": "**/*",
             "input": "angular-dashboard/public"
+          },
+          {
+            "glob": "*.{js,css}",
+            "input": "dist/react-recommender-web-component",
+            "output": "/"
           }
         ],
         "styles": [

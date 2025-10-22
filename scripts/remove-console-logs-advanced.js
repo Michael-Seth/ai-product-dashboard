@@ -80,14 +80,8 @@ class AdvancedConsoleLogRemover {
    * Main entry point
    */
   async removeConsoleLogs(paths = ['.']) {
-    console.log(' Starting advanced console.log removal process...\n');
-    
     if (this.options.dryRun) {
-      console.log(' DRY RUN MODE - No files will be modified\n');
     }
-    
-    console.log(` Target environment: ${this.options.environment}\n`);
-    
     try {
       for (const targetPath of paths) {
         await this.processPath(targetPath);
@@ -125,7 +119,6 @@ class AdvancedConsoleLogRemover {
 
         if (this.config.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
-            console.log(`⏭️ Skipping directory: ${fullPath}`);
           }
           continue;
         }
@@ -176,7 +169,6 @@ class AdvancedConsoleLogRemover {
         this.stats.byFileType[fileExt].modified++;
         
         if (this.options.verbose) {
-          console.log(` Processing: ${filePath}`);
         }
         
         if (!this.options.dryRun) {
@@ -537,59 +529,27 @@ class AdvancedConsoleLogRemover {
    * Print detailed summary
    */
   printSummary() {
-    console.log('\n Advanced Console.log Removal Summary:');
-    console.log('═'.repeat(55));
-    console.log(` Files processed: ${this.stats.filesProcessed}`);
-    console.log(`️ Files modified: ${this.stats.filesModified}`);
-    console.log(`️ Console statements removed: ${this.stats.consoleStatementsRemoved}`);
-    console.log(`️ Console statements preserved: ${this.stats.preserved}`);
-    console.log(` Lines removed: ${this.stats.linesRemoved}`);
-    
     // Show breakdown by method
-    console.log('\n Breakdown by console method:');
     for (const [method, stats] of Object.entries(this.stats.byMethod)) {
       if (stats.removed > 0 || stats.preserved > 0) {
-        console.log(` console.${method}: ${stats.removed} removed, ${stats.preserved} preserved`);
       }
     }
     
     // Show breakdown by file type
-    console.log('\n Breakdown by file type:');
     for (const [ext, stats] of Object.entries(this.stats.byFileType)) {
       if (stats.processed > 0) {
-        console.log(` ${ext}: ${stats.processed} processed, ${stats.modified} modified, ${stats.removed} lines removed`);
       }
     }
     
     if (this.options.dryRun) {
-      console.log('\n This was a dry run - no files were actually modified');
-      console.log(' Run without --dry-run to apply changes');
     } else {
-      console.log('\n Advanced console.log removal completed successfully!');
     }
-    
-    console.log('\n Recommendations:');
-    console.log(' • Run tests to ensure functionality after removal');
-    console.log(' • Consider implementing a proper logging library');
-    console.log(' • Review preserved statements for production readiness');
   }
 
   /**
    * Show help message
    */
   static showHelp() {
-    console.log(`
-🚀 Advanced Console.log Removal Script for AI E-commerce Platform
-
-Enhanced version with configuration support and environment-specific rules.
-
-Usage:
-  node scripts/remove-console-logs-advanced.js [options] [paths...]
-
-Options:
-  --config <path>      Use custom configuration file
-  --dry-run            Show what would be changed without modifying files
-  --env <environment>  Target environment (development, production, test)
   --preserve-errors    Preserve console.error and console.warn
   --remove-all         Remove all console statements
   --verbose            Show detailed output

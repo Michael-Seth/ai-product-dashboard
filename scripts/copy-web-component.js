@@ -22,8 +22,6 @@ const FILES_TO_COPY = [
 ];
 
 function copyWebComponentFiles() {
-  console.log('🚀 Copying React web component files...\n');
-
   // Check if source directory exists
   if (!fs.existsSync(SOURCE_DIR)) {
     console.error(`❌ Source directory not found: ${SOURCE_DIR}`);
@@ -34,7 +32,6 @@ function copyWebComponentFiles() {
 
   // Ensure target directory exists
   if (!fs.existsSync(TARGET_DIR)) {
-    console.log(`📁 Creating target directory: ${TARGET_DIR}`);
     fs.mkdirSync(TARGET_DIR, { recursive: true });
   }
 
@@ -54,25 +51,15 @@ function copyWebComponentFiles() {
       }
 
       fs.copyFileSync(sourcePath, targetPath);
-      console.log(`✅ Copied: ${fileName}`);
       copiedFiles++;
     } catch (error) {
       console.error(`❌ Failed to copy ${fileName}:`, error.message);
       errors++;
     }
   });
-
-  console.log('\n📊 Copy Summary:');
-  console.log(`   Files copied: ${copiedFiles}`);
-  console.log(`   Errors: ${errors}`);
-
   if (errors > 0) {
-    console.log('\n❌ Copy completed with errors');
     process.exit(1);
   } else {
-    console.log('\n✅ All web component files copied successfully!');
-    console.log('\n💡 The React recommender widget is now available in Angular');
-    console.log('   Start the Angular dev server to test: npm run dev');
   }
 }
 

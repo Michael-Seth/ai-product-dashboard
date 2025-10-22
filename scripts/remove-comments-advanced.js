@@ -73,10 +73,7 @@ class AdvancedCommentRemover {
    * Main entry point
    */
   async removeComments(paths = ['.']) {
-    console.log(' Starting advanced comment removal process...\n');
-    
     if (this.options.dryRun) {
-      console.log(' DRY RUN MODE - No files will be modified\n');
     }
     
     try {
@@ -158,7 +155,6 @@ class AdvancedCommentRemover {
 
         if (this.config.excludeDirs.includes(entry.name)) {
           if (this.options.verbose) {
-            console.log(`⏭️ Skipping directory: ${fullPath}`);
           }
           continue;
         }
@@ -209,7 +205,6 @@ class AdvancedCommentRemover {
         this.stats.byFileType[fileExt].modified++;
         
         if (this.options.verbose) {
-          console.log(` Processing: ${filePath}`);
         }
         
         if (!this.options.dryRun) {
@@ -427,48 +422,21 @@ class AdvancedCommentRemover {
    * Print detailed summary
    */
   printSummary() {
-    console.log('\n Advanced Comment Removal Summary:');
-    console.log('═'.repeat(50));
-    console.log(` Files processed: ${this.stats.filesProcessed}`);
-    console.log(`️ Files modified: ${this.stats.filesModified}`);
-    console.log(` Comments removed: ${this.stats.commentsRemoved}`);
-    console.log(` Lines removed: ${this.stats.linesRemoved}`);
-    
     // Show breakdown by file type
-    console.log('\n Breakdown by file type:');
     for (const [ext, stats] of Object.entries(this.stats.byFileType)) {
       if (stats.processed > 0) {
-        console.log(` ${ext}: ${stats.processed} processed, ${stats.modified} modified, ${stats.commentsRemoved} comments removed`);
       }
     }
     
     if (this.options.dryRun) {
-      console.log('\n This was a dry run - no files were actually modified');
-      console.log(' Run without --dry-run to apply changes');
     } else {
-      console.log('\n Advanced comment removal completed successfully!');
     }
-    
-    console.log('\n Recommendations:');
-    console.log(' • Run your linter/formatter after comment removal');
-    console.log(' • Review changes before committing');
-    console.log(' • Consider running tests to ensure functionality');
   }
 
   /**
    * Show help message
    */
   static showHelp() {
-    console.log(`
-🚀 Advanced Comment Removal Script for AI E-commerce Platform
-
-Enhanced version with configuration support and granular control.
-
-Usage:
-  node scripts/remove-comments-advanced.js [options] [paths...]
-
-Options:
-  --config <path>  Use custom configuration file (default: ./scripts/remove-comments.config.js)
   --dry-run        Show what would be changed without modifying files
   --verbose        Show detailed output for each file processed
   --pattern <glob> Process only files matching glob pattern

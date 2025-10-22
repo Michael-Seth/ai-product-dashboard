@@ -12,23 +12,15 @@ class StandaloneAIService {
     this.openaiApiKey = process.env.OPENAI_API_KEY;
     this.grokApiKey = process.env.GROK_API_KEY;
     this.claudeApiKey = process.env.CLAUDE_API_KEY;
-    
-    console.log('🤖 AI Service initialized with providers:');
-    console.log(`   OpenAI: ${this.openaiApiKey ? '✅' : '❌'}`);
-    console.log(`   Grok: ${this.grokApiKey ? '✅' : '❌'}`);
-    console.log(`   Claude: ${this.claudeApiKey ? '✅' : '❌'}`);
   }
 
   async generateRecommendations(product) {
-    console.log(`🔍 Generating recommendations for: ${product.name}`);
-    
     // Try OpenAI first
     if (this.openaiApiKey) {
       try {
         return await this.generateWithOpenAI(product);
       } catch (error) {
         console.warn('⚠️ OpenAI failed:', error.message);
-        console.log('🔄 Trying Grok as fallback...');
       }
     }
     
@@ -38,7 +30,6 @@ class StandaloneAIService {
         return await this.generateWithGrok(product);
       } catch (error) {
         console.warn('⚠️ Grok failed:', error.message);
-        console.log('🔄 Trying Claude as fallback...');
       }
     }
     
@@ -48,18 +39,14 @@ class StandaloneAIService {
         return await this.generateWithClaude(product);
       } catch (error) {
         console.warn('⚠️ Claude failed:', error.message);
-        console.log('🔄 Using fallback recommendations...');
       }
     }
     
     // If all AI providers fail, use fallback
-    console.log('🔄 All AI providers failed, using fallback recommendations');
     return this.generateFallbackRecommendations(product);
   }
 
   async generateWithOpenAI(product) {
-    console.log('🤖 Using OpenAI for recommendations...');
-    
     const prompt = `Based on this product: ${product.name} - ${product.description} (Price: $${product.price}), recommend 3 similar or complementary products. Return a JSON array with objects containing: id, name, description, price, confidence (0-1). Make the recommendations realistic and relevant.`;
     
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -96,8 +83,6 @@ class StandaloneAIService {
   }
 
   async generateWithGrok(product) {
-    console.log('🤖 Using Grok for recommendations...');
-    
     const prompt = `Based on this product: ${product.name} - ${product.description} (Price: $${product.price}), recommend 3 similar or complementary products. Return a JSON array with objects containing: id, name, description, price, confidence (0-1).`;
     
     const response = await fetch('https://api.x.ai/v1/chat/completions', {
@@ -134,8 +119,6 @@ class StandaloneAIService {
   }
 
   async generateWithClaude(product) {
-    console.log('🤖 Using Claude for recommendations...');
-    
     const prompt = `Based on this product: ${product.name} - ${product.description} (Price: $${product.price}), recommend 3 similar or complementary products. Return a JSON array with objects containing: id, name, description, price, confidence (0-1).`;
     
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -183,8 +166,6 @@ class StandaloneAIService {
   }
 
   generateFallbackRecommendations(product) {
-    console.log('🔄 Using fallback recommendations');
-    
     const basePrice = product.price || 100;
     
     return [

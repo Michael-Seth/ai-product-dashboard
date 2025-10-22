@@ -9,6 +9,7 @@ interface RecommenderProps {
 export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
   const [retryCount, setRetryCount] = useState(0);
   const [lastError, setLastError] = useState<string | null>(null);
+  const [useMockData, setUseMockData] = useState(false);
 
   const {
     data,
@@ -18,54 +19,51 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     refetch,
     isFetching,
   } = useGetRecommendationsQuery(product?.name || '', {
-    skip: !product,
+    skip: !product || useMockData, // Skip API call if using mock data
     refetchOnMountOrArgChange: true,
-    refetchOnReconnect: true,
+    refetchOnReconnect: false, // Disable auto-reconnect to prevent loops
   });
 
-  // Mock data fallback for development
-  const mockRecommendations: Recommendation[] = [
-    { name: 'Premium Laptop Sleeve', reason: 'Perfect protection for your device' },
-    { name: 'Wireless Mouse', reason: 'Enhance your productivity' },
-    { name: 'USB-C Hub', reason: 'Expand your connectivity options' },
-  ];
+  // No local mock data needed - server handles fallback
 
-  // Use mock data if API fails
-  const recommendations = data?.recommendations || (isError ? mockRecommendations : []);
-
-  console.log('📊 Recommender component state:', {
-    hasProduct: !!product,
-    productName: product?.name,
-    isLoading,
-    isError,
-    hasApiData: !!data,
-    apiRecommendations: data?.recommendations?.length || 0,
-    usingMockData: isError && recommendations.length > 0,
-    totalRecommendations: recommendations.length,
-    recommendations
-  });
+  // Determine what data to use
+  const hasValidApiData = data?.recommendations && Array.isArray(data.recommendations) && data.recommendations.length > 0;
+  
+  // Use API data (server handles fallback to mock data internally)
+  const recommendations = hasValidApiData ? data.recommendations : [];
+  
+  // If API fails, switch to mock data permanently for this session
+  useEffect(() => {
+    if (isError && !useMockData) {
+      setUseMockData(true);
+    }
+  }, [isError, useMockData]);
 
   const handleRetry = useCallback(async () => {
     if (retryCount < 3) { // Limit retries to prevent infinite loops
       setRetryCount(prev => prev + 1);
       setLastError(null);
+      setUseMockData(false); // Try API again
       try {
         await refetch();
       } catch (err) {
         console.error('Retry failed:', err);
         setLastError(err instanceof Error ? err.message : 'Retry failed');
+        setUseMockData(true); // Fall back to mock data
       }
     } else {
       setLastError('Maximum retry attempts reached. Please refresh the page.');
+      setUseMockData(true); // Use mock data after max retries
     }
   }, [refetch, retryCount]);
 
   useEffect(() => {
     setRetryCount(0);
     setLastError(null);
+    // Don't reset useMockData here - let it persist unless user manually retries
   }, [product?.name]);
 
-  if (isLoading || isFetching) {
+  if ((isLoading || isFetching) && !useMockData) {
     return (
       <div className="loading-container empty-state">
         <div className="loading-spinner mb-4"></div>
@@ -87,7 +85,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
     );
   }
 
-  if (isError) {
+  if (isError && !useMockData) {
     const errorMessage = typeof error === 'string'
       ? error
       : lastError
@@ -200,11 +198,7 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
   }
 
   // Success state with recommendations (already defined above)
-
-  console.log('✅ Rendering recommendations:', recommendations);
-
   if (recommendations.length === 0) {
-    console.log('⚠️ No recommendations to display');
     return (
       <div className="empty-state fade-in">
         <div className="w-16 h-16 bg-yellow-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -225,9 +219,6 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
       </div>
     );
   }
-
-  console.log('🎨 Rendering recommendation cards:', recommendations.length);
-
   return (
     <div className="fade-in">
       <div className="flex items-center mb-4">
@@ -248,38 +239,65 @@ export const Recommender: React.FC<RecommenderProps> = ({ product }) => {
           )}
         </div>
       </div>
-      <div className="recommendation-list">
+      <div className="flex flex-wrap gap-6">
         {recommendations.map((recommendation: Recommendation, index: number) => (
           <div
             key={`${recommendation.name}-${index}`}
-            className="recommendation-card group fade-in"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden group hover:shadow-lg transition-all duration-300 fade-in flex-1 min-w-[250px] max-w-[calc(25%-1.125rem)]"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center group-hover:bg-brand/20 transition-colors duration-200">
-                <svg className="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="recommendation-name group-hover:text-brand transition-colors duration-200">
+            {/* Product Image */}
+            <div className="aspect-square bg-gray-100 overflow-hidden">
+              {recommendation.image ? (
+                <img 
+                  src={recommendation.image} 
+                  alt={recommendation.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    // Fallback to placeholder if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'https://via.placeholder.com/300x300/F3F4F6/9CA3AF?text=Product';
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full bg-brand/10 flex items-center justify-center">
+                  <svg className="w-12 h-12 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                </div>
+              )}
+            </div>
+
+            {/* Product Info */}
+            <div className="p-4">
+              <div className="flex items-start justify-between mb-2">
+                <h4 className="font-semibold text-gray-900 text-sm leading-tight group-hover:text-brand transition-colors duration-200 line-clamp-2">
                   {recommendation.name}
                 </h4>
-                <p className="recommendation-reason">
-                  {recommendation.reason}
-                </p>
+                {recommendation.price && (
+                  <span className="text-lg font-bold text-brand ml-2 flex-shrink-0">
+                    ${recommendation.price}
+                  </span>
+                )}
               </div>
-              <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
+              
+              <p className="text-xs text-gray-600 line-clamp-2 mb-3">
+                {recommendation.reason}
+              </p>
+
+              {/* Action Button */}
+              <button className="w-full bg-brand text-white text-sm font-medium py-2 px-4 rounded-lg hover:bg-brand-dark transition-colors duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-200">
+                View Details
+              </button>
             </div>
           </div>
         ))}
       </div>
-      <div className="mt-4 text-center">
-        <button className="text-sm text-brand hover:text-brand-dark font-medium hover:underline transition-colors duration-200">
+      <div className="mt-8 text-center">
+        <button className="inline-flex items-center px-6 py-3 bg-gray-100 text-brand font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200">
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
           View More Recommendations
         </button>
       </div>
